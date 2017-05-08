@@ -1,0 +1,21 @@
+{
+  "name": "joeshop",
+  "version": "1.0.0",
+  "description": "",
+  "main": "Server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node Server.js"
+  },
+  "dependencies": {
+   "async": "^2.4.0",
+    "ejs": "latest",
+   "express": "latest",
+   "mongodb": "^2.2.26",
+   "monk": "^4.0.0",
+   "express-helpers":"latest",
+   "body-parser":"latest"
+ },
+  "author": "",
+  "license": "ISC"
+}
