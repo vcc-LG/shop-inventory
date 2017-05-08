@@ -8,7 +8,7 @@
 
 <ul>
     <% suppliers.forEach(function(item) { %>
-      <li><a href='edit/<%= item["supplier_name"] %>'><%= item['supplier_name']%>  - <%= item["supplier_contact"] %></a>  </li>
+      <li><a href='edit/<%= item["_id"] %>'><%= item['supplier_name']%>  - <%= item["supplier_contact"] %></a>  </li>
     <% }); %>
 </ul>
 </div>

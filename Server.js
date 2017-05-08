@@ -115,6 +115,13 @@ app.post('/add_supplier', function(req, res) {
     });
 });
 
+app.get('/edit/:id', function(req, res) {
+  console.log(req.params.id);
+  res.render(path + "edit.ejs", {
+      id: req.params.id
+  });
+});
+
 
 router.get("/add_product", function(req, res, next) {
     res.render(path + 'add_product.ejs');
