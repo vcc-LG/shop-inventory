@@ -1,26 +1,16 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-</head>
-<body>
-  <div class="jumbotron">
-    <div class="container">
-      <h1 class="display-3">List of suppliers</h1>
+<%- include('header') -%>
+<div class="container">
+    <div class="jumbotron">
+      <h1>Inventory</h1>
     </div>
-  </div>
-  <div>
+</div>
+  <div class="container">
 
 <ul>
-    <% suppliers[0].supplier.forEach(function(item) { %>
-        <li><%= item['name'] %> - <%= item['contact'] %></li>
+    <% suppliers.forEach(function(item) { %>
+      <li><a href='edit/<%= item["supplier_name"] %>'><%= item['supplier_name']%>  - <%= item["supplier_contact"] %></a>  </li>
     <% }); %>
 </ul>
 </div>
 
-<h3><a href='/' >Home</a></h3>
 </body>

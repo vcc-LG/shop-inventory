@@ -1,0 +1,14 @@
+<%- include('header') -%>
+<div class="container">
+    <div class="jumbotron">
+      <h1> Edit supplier</h1>
+    </div>
+</div>
+
+<div class="container">
+<form action="/add_supplier" method="post" accept-charset="utf-8">
+  <p>Supplier name</p><input type="text" name="supplier_name" />
+  <p>Supplier contact</p><input type="text" name="supplier_contact" />
+  <input type="submit" value="Submit"/>
+</form>
+</div>
