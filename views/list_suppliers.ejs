@@ -5,12 +5,18 @@
     </div>
 </div>
   <div class="container">
+    <div class="list-group">
+<% suppliers.forEach(function(item) { %>
 
-<ul>
-    <% suppliers.forEach(function(item) { %>
-      <li><a href='edit/<%= item["_id"] %>'><%= item['supplier_name']%>  - <%= item["supplier_contact"] %></a>  </li>
-    <% }); %>
-</ul>
+  <a href='edit/<%= item["_id"] %>' class="list-group-item">
+    <h4 class="list-group-item-heading"><%= item['supplier_name']%></h4>
+    <p class="list-group-item-text"><%= item["supplier_contact"] %></p>
+  </a>
+
+      <% }); %>
+
+    </div>
+
 </div>
 
 </body>
