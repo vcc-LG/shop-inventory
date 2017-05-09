@@ -1,22 +1,28 @@
 <%- include('header') -%>
-<div class="container">
-    <div class="jumbotron">
-      <h1>Inventory</h1>
+    <div class="container">
+        <div class="jumbotron">
+            <h1>Inventory</h1>
+        </div>
     </div>
-</div>
-  <div class="container">
-    <div class="list-group">
-<% suppliers.forEach(function(item) { %>
+    <div class="container">
+        <div class="list-group">
+            <% suppliers.forEach(function(item) { %>
 
-  <a href='edit/<%= item["_id"] %>' class="list-group-item">
-    <h4 class="list-group-item-heading"><%= item['supplier_name']%></h4>
-    <p class="list-group-item-text"><%= item["supplier_contact"] %></p>
-  </a>
+              <ul class="list-group">
+    <li class="list-group-item clearfix"><h4 class="list-group-item-heading"><%= item['supplier_name']%></h4>
+      <p class="list-group-item-text"><%= item["supplier_contact"] %></p>
+        <span class="pull-right button-group">
+          <a href='edit/<%= item["_id"] %>' class="btn btn-primary"><span class="glyphicon glyphicon-plus"></span> Add product</a>
 
-      <% }); %>
+            <a href='edit/<%= item["_id"] %>' class="btn btn-warning"><span class="glyphicon glyphicon-edit"></span> Edit</a>
+        </span>
+    </li>
+</ul>
+
+                <% }); %>
+
+        </div>
 
     </div>
 
-</div>
-
-</body>
+    </body>
