@@ -5,7 +5,18 @@
     </div>
 </div>
   <div class="container">
-<p>
-  <%= id %>
-</p>
+
+
+<form>
+  <div class="form-group">
+    <label for="supplier_name">Supplier name:</label>
+    <input type="text" class="form-control" id="supplier_name" value=  <%= data[0]['supplier_name'] %> >
+  </div>
+  <div class="form-group">
+    <label for="supplier_contact">Supplier contact:</label>
+    <input type="text" class="form-control" id="supplier_contact" value=  <%= data[0]['supplier_contact'] %>>
+  </div>
+  <button type="submit" class="btn btn-default">Submit</button>
+</form>
+
 </div>

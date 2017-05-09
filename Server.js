@@ -15,6 +15,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
     extended: true
 }));
+var ObjectId = require('mongodb').ObjectID;
 
 MongoClient.connect(url, function(err, db) {
     if (err) throw err;
@@ -86,14 +87,14 @@ app.post('/add_supplier', function(req, res) {
             console.log(supplier_contact);
             var insertDocument = function(db, callback) {
                 db.collection('shop_collection').insertOne({
-                        "supplier_name": supplier_name,
-                        "supplier_contact": supplier_contact
-                    }, function(err, result) {
-                        assert.equal(err, null);
-                        console.log("Inserted a document into the collection.");
-                        callback();
-                    });
-                };
+                    "supplier_name": supplier_name,
+                    "supplier_contact": supplier_contact
+                }, function(err, result) {
+                    assert.equal(err, null);
+                    console.log("Inserted a document into the collection.");
+                    callback();
+                });
+            };
             MongoClient.connect(url, function(err, db) {
                 assert.equal(null, err);
                 insertDocument(db, function() {
@@ -115,12 +116,25 @@ app.post('/add_supplier', function(req, res) {
     });
 });
 
-app.get('/edit/:id', function(req, res) {
-  console.log(req.params.id);
-  res.render(path + "edit.ejs", {
-      id: req.params.id
-  });
+app.get('/edit/:id', function(req, res, next) {
+    console.log(req.params.id);
+    collection.find({
+        "_id": ObjectId(req.params.id)
+    }, function(e, supplier_edit) {
+        console.log(supplier_edit);
+        res.render(path + "edit.ejs", {
+            data: supplier_edit
+        });
+    });
 });
+// res.render(path + "edit.ejs", {
+//     data: supplier_edit
+// });
+
+// res.render(path + "edit.ejs", {
+//     id: req.params.id
+// });
+
 
 
 router.get("/add_product", function(req, res, next) {
