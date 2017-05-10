@@ -122,6 +122,36 @@ app.get('/edit/:id', function(req, res, next) {
     });
 });
 
+app.get('/delete/:id', function(req, res, next) {
+  console.log('hello');
+    var tasks = [
+        function(callback) {
+          var supplier_id = req.params.id;
+
+            var deleteDocument = function(db, callback) {
+                db.collection('shop_collection').deleteOne(
+                  {"_id":ObjectId(supplier_id)},function(err, result) {
+                    assert.equal(err, null);
+                    console.log("Removed document");
+                    callback();
+                });
+            };
+            MongoClient.connect(url, function(err, db) {
+                assert.equal(null, err);
+                deleteDocument(db, function() {
+                    db.close();
+                    callback();
+                });
+            });
+        }
+    ];
+
+    async.parallel(tasks, function(err) {
+        if (err) return next(err);
+        res.redirect('/list_suppliers');
+    });
+});
+
 app.post('/edit_supplier', function(req, res) {
   console.log('hello');
     var supplier_name = req.body.supplier_name;
