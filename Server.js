@@ -104,14 +104,9 @@ app.post('/add_supplier', function(req, res) {
         }
     ];
 
-    async.parallel(tasks, function(err) {
-        if (err) return next(err);
-        collection.find({}, function(e, suppliers) {
-            console.log(suppliers);
-            res.render(path + "list_suppliers.ejs", {
-                suppliers: suppliers
-            });
-        });
+        async.parallel(tasks, function(err) {
+            if (err) return next(err);
+            res.redirect('/list_suppliers');
     });
 });
 
@@ -168,15 +163,8 @@ app.post('/edit_supplier', function(req, res) {
 
     async.parallel(tasks, function(err) {
         if (err) return next(err);
-        collection.find({}, function(e, suppliers) {
-            console.log(suppliers);
-            res.render(path + "list_suppliers.ejs", {
-                suppliers: suppliers
-            });
-        });
+        res.redirect('/list_suppliers');
     });
-
-
 });
 
 
