@@ -29,9 +29,9 @@
                     <% data[0]["products"].forEach(function(item) { %>
                         <div class="form-group">
                             <label for="product_name">Product name:</label>
-                            <input type="text" class="form-control" id="product_name" name="product_name" value=<%=item['product_name'] %>>
+                            <input type="text" class="form-control" id="product_name" name="product_name_<%=item['product_name'] %>" value=<%=item['product_name'] %>>
                             <label for="product_price">Product price:</label>
-                            <input type="text" class="form-control" id="product_price" name="product_price" value=<%=item['product_price'] %>>
+                            <input type="text" class="form-control" id="product_price" name="product_price_<%=item['product_price'] %>" value=<%=item['product_price'] %>>
                         </div>
                         <button formaction='../edit_product/<%= data[0]['_id'] %>/<%=item['product_name'] %>/<%=item['product_price'] %>/' type="submit" value="Submit" class="btn btn-default">Update</button>
 <p>

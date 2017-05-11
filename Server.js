@@ -217,13 +217,43 @@ app.post('/edit_supplier', function(req, res) {
 });
 
 app.post('/edit_product/:id/:product_name/:product_price', function(req, res) {
-  var supplier_id = req.params.id;
-  var product_name = req.params.product_name;
-  var product_price = req.params.product_price;
+  // var product_names = req.body['product_name_'+req.params.product_name];
+  //
+  // console.log(product_names);
+    var tasks = [
+        function(callback) {
+          var supplier_id = req.params.id;
+          var old_product_name = req.params.product_name;
 
-    console.log(supplier_id);
-    console.log(product_name);
-    console.log(product_price);
+          var new_product_name = req.body['product_name_'+req.params.product_name];
+          var new_product_price = req.body['product_price_'+req.params.product_price];
+
+            var updateDocument = function(db, callback) {
+                db.collection('shop_collection').update(
+                  {"_id":ObjectId(supplier_id),
+                  'products.product_name':old_product_name},
+                  {$set:{"products.$.product_price":new_product_price,
+                  "products.$.product_name":new_product_name}}
+                , function(err, result) {
+                    assert.equal(err, null);
+                    console.log("Updated document");
+                    callback();
+                });
+            };
+            MongoClient.connect(url, function(err, db) {
+                assert.equal(null, err);
+                updateDocument(db, function() {
+                    db.close();
+                    callback();
+                });
+            });
+        }
+    ];
+
+    async.parallel(tasks, function(err) {
+        if (err) return next(err);
+        res.redirect('/list_suppliers');
+    });
 
 });
 
