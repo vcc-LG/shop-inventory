@@ -23,41 +23,6 @@ MongoClient.connect(url, function(err, db) {
     db.close();
 });
 
-// var insertDocument = function(db, callback) {
-//     db.collection('shop_collection').insertOne({
-//         "supplier": [{
-//             "name": "Jungle Brothers",
-//             "contact": "10075",
-//             "products": [{
-//                 "name": "Rizla",
-//                 "cost": "0.5"
-//             }, {
-//                 "name": "Apples",
-//                 "cost": "1"
-//             }],
-//         },
-//         {
-//             "name": "Mr Nice",
-//             "contact": "20938",
-//             "products": [{
-//                 "name": "Bananas",
-//                 "cost": "0.5"
-//             }, {
-//                 "name": "Oranges",
-//                 "cost": "1"
-//             }],
-//         },
-//       ]
-//     });
-// };
-//
-// MongoClient.connect(url, function(err, db) {
-//     assert.equal(null, err);
-//     insertDocument(db, function() {
-//         db.close();
-//     });
-// });
-
 const db = require('monk')('localhost/shopdb')
 const collection = db.get('shop_collection')
 db.then(() => {
@@ -117,7 +82,7 @@ app.get('/edit/:id', function(req, res, next) {
     }, function(e, supplier_edit) {
         // console.log(supplier_edit);
         res.render(path + "edit.ejs", {
-            suppliers: supplier_edit
+            data: supplier_edit
         });
     });
 });
@@ -249,6 +214,17 @@ app.post('/edit_supplier', function(req, res) {
         if (err) return next(err);
         res.redirect('/list_suppliers');
     });
+});
+
+app.post('/edit_product/:id/:product_name/:product_price', function(req, res) {
+  var supplier_id = req.params.id;
+  var product_name = req.params.product_name;
+  var product_price = req.params.product_price;
+
+    console.log(supplier_id);
+    console.log(product_name);
+    console.log(product_price);
+
 });
 
 
