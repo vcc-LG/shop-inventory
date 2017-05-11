@@ -42,6 +42,15 @@ router.get("/add_supplier", function(req, res, next) {
     res.render(path + 'add_supplier.ejs');
 });
 
+router.get("/order", function(req, res, next) {
+  collection.find({}, function(e, suppliers) {
+      // console.log(suppliers);
+      res.render(path + "order.ejs", {
+          suppliers: suppliers
+      });
+  });
+  });
+
 app.post('/add_supplier', function(req, res) {
     var tasks = [
         function(callback) {

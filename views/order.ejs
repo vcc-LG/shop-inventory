@@ -1,0 +1,33 @@
+<%- include('header') -%>
+
+    <div class="container">
+        <div class="jumbotron">
+            <h1>Order</h1>
+        </div>
+    </div>
+
+
+    <div class="container">
+
+        <form>
+            <div class="form-group">
+
+                <label for="something">Supplier:
+<input id="something" list="somethingelse">
+<datalist id="somethingelse">
+
+  <% suppliers.forEach(function(item) { %>
+
+  <option id="supplier_choice" value=<%= item["supplier_name"]%>></option>
+
+  <% }); %>
+
+</datalist>
+</label>
+
+
+
+        </form>
+
+        </div>
+        </body>
