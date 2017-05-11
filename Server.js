@@ -117,10 +117,64 @@ app.get('/edit/:id', function(req, res, next) {
     }, function(e, supplier_edit) {
         // console.log(supplier_edit);
         res.render(path + "edit.ejs", {
-            data: supplier_edit
+            suppliers: supplier_edit
         });
     });
 });
+
+
+app.get('/add_product/:id', function(req, res, next) {
+    // console.log(req.params.id);
+    collection.find({
+        "_id": ObjectId(req.params.id)
+    }, function(e, data) {
+        // console.log(supplier_edit);
+        res.render(path + "add_product.ejs", {
+            supplier: data
+        });
+    });
+});
+
+app.post('/add_product', function(req, res) {
+
+    var tasks = [
+        function(callback) {
+          var product_name = req.body.product_name;
+          var product_price = req.body.product_price;
+          var supplier_id = req.body.supplier_id;
+
+
+            var updateDocument = function(db, callback) {
+                db.collection('shop_collection').update(
+                  {"_id":ObjectId(supplier_id)},
+                  {$push: { products: {
+                      product_name: product_name,
+                      product_price: product_price
+                    }  }
+                  }
+                , function(err, result) {
+                    assert.equal(err, null);
+                    console.log("Updated document");
+                    callback();
+                });
+            };
+            MongoClient.connect(url, function(err, db) {
+                assert.equal(null, err);
+                updateDocument(db, function() {
+                    db.close();
+                    callback();
+                });
+            });
+        }
+    ];
+
+    async.parallel(tasks, function(err) {
+        if (err) return next(err);
+        res.redirect('/list_suppliers');
+    });
+});
+
+
 
 app.get('/delete/:id', function(req, res, next) {
   console.log('hello');
