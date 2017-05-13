@@ -35,18 +35,25 @@
               </datalist>
               </label>
 
+              <input type="button" onclick="add_to_order();" class="btn btn-info" value="Add to order">
+
+
 <!-- <select id="item">
 </select> -->
 
 
         </form>
 
+
         </div>
 
+        <div class="container" id="summary">
+
+</div>
         <script>
         <% suppliers.forEach(function(item) { %>
         <%= item["supplier_name"]%> = new Array([<% item["products"].forEach(function(thing) { %>
-        "<%= thing["product_name"] %>" ,
+        "<%= thing["product_name"] %> : <%= thing["product_price"] %> " ,
         <% }); %>
         ]);
           <% }); %>
@@ -60,6 +67,7 @@
         $("#suppliers").bind('input', function () {
           populateSelect();
         });
+
         //
         // $(function() {
         //       $('#suppliers').change(function(){
@@ -69,6 +77,11 @@
         // });
 
 
+function clearBoxes(){
+  document.getElementById("suppliers").value = "";
+  document.getElementById("products").value = "";
+
+}
 
         function populateSelect(){
             cat=$('#suppliers').val();
@@ -76,6 +89,13 @@
                eval(cat).forEach(function(t) {
                     $('#products_list').append('<option>'+t+'</option>');
                 });
+            }
+
+
+            function add_to_order() {
+              // /var supplier_order = $('#suppliers').val();
+                document.getElementById('summary').innerHTML += '<p>'+$('#suppliers').val()+'</p>' + '<p>'+$('#products').val()+'</p>'
+                clearBoxes();
             }
 
         </script>
