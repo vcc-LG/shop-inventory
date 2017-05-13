@@ -1,8 +1,42 @@
 <%- include('header') -%>
+<style>
 
-
-
-
+.spinner {
+  width: 100px;
+}
+.spinner input {
+  text-align: right;
+}
+.input-group-btn-vertical {
+  position: relative;
+  white-space: nowrap;
+  width: 1%;
+  vertical-align: middle;
+  display: table-cell;
+}
+.input-group-btn-vertical > .btn {
+  display: block;
+  float: none;
+  width: 100%;
+  max-width: 100%;
+  padding: 8px;
+  margin-left: -1px;
+  position: relative;
+  border-radius: 0;
+}
+.input-group-btn-vertical > .btn:first-child {
+  border-top-right-radius: 4px;
+}
+.input-group-btn-vertical > .btn:last-child {
+  margin-top: -2px;
+  border-bottom-right-radius: 4px;
+}
+.input-group-btn-vertical i{
+  position: absolute;
+  top: 0;
+  left: 4px;
+}
+</style>
     <div class="container">
         <div class="jumbotron">
             <h1>Order</h1>
@@ -12,9 +46,8 @@
 
     <div class="container">
 
-        <form>
-            <div class="form-group">
-
+        <div class="row">
+          <div class="container">
 
               <label for="suppliers">Supplier:
               <input id="suppliers" list="suppliers_list">
@@ -28,20 +61,49 @@
 
               </datalist>
               </label>
+</div>
+</div>
+<div class="row">
+  <div class="container">
+<p>
 
-              <label for="products">Product:
-              <input id="products" list="products_list">
-              <datalist id="products_list">
-              </datalist>
-              </label>
+</p>
+  <label for="products">Product:
+  <input id="products" list="products_list">
+  <datalist id="products_list">
+  </datalist>
+  </label>
+</div>
+
+</div>
+<div class="row">
+  <div class="container"><label for="products">Quantity:
+    <div class="input-group spinner">
+      <input type="text" class="form-control" id="quantity" value="1">
+      <div class="input-group-btn-vertical">
+        <button class="btn btn-default" type="button"><i class="fa fa-caret-up"></i></button>
+        <button class="btn btn-default" type="button"><i class="fa fa-caret-down"></i></button>
+      </div>
+    </div>
+  </div>
+
+<p>
+
+</p>
+
+</div>
+<div class="row">
+  <div class="container">
+
+
 
               <input type="button" onclick="add_to_order();" class="btn btn-info" value="Add to order">
 
-        </form>
+            </div>
+
+</div>
         <input type="hidden" id="last_price" >
 
-
-        </div>
 
 <h1>Order summary</h1>
 <form>
@@ -60,7 +122,17 @@
   </div>
 </div>
 
+<script>
 
+(function ($) {
+  $('.spinner .btn:first-of-type').on('click', function() {
+    $('.spinner input').val( parseInt($('.spinner input').val(), 10) + 1);
+  });
+  $('.spinner .btn:last-of-type').on('click', function() {
+    $('.spinner input').val( parseInt($('.spinner input').val(), 10) - 1);
+  });
+})(jQuery);
+</script>
 
         <script>
         document.getElementById("order_total").innerHTML = 0;
@@ -108,6 +180,8 @@
             var fileId = 0; // used by the addFile() function to keep track of IDs
 
             function add_to_order() {
+              // console.log($('#suppliers').val().length);
+              if ($('#suppliers').val().length != 0)  {
               fileId++; // increment fileId to get a unique ID for the new element
 
               // /var supplier_order = $('#suppliers').val();
@@ -117,13 +191,15 @@
                 $('#suppliers').val()+
                  '></div><div class="form-group"><label for="product_name">Product name:</label><input type="text" readonly class="form-control" id="product_name" value='+
                 $('#products').val()+
-                '></div><a href="" onclick="javascript:removeElement('+fileId + '); return false;">Remove</a></div>';
-
-                document.getElementById("order_total").innerHTML = parseFloat($('#order_total').text()) + parseFloat($('#products').val().split(":")[1]);
-                document.getElementById("last_price").innerHTML = parseFloat($('#products').val().split(":")[1]);
+                '></div><div class="form-group"><label for="product_quantity">Quantity:</label><input type="text" readonly class="form-control" id="product_quantity" value='+
+               $('#quantity').val()+
+               '></div><a href="" onclick="javascript:removeElement('+fileId + '); return false;">Remove</a></div>';
+               var priceToAdd = parseFloat($('#quantity').val())*(parseFloat($('#products').val().split(":")[1]));
+                document.getElementById("order_total").innerHTML = parseFloat($('#order_total').text()) + priceToAdd;
+                document.getElementById("last_price").innerHTML = priceToAdd;
 
                 clearBoxes();
-            }
+            }}
 
         </script>
         </body>
