@@ -1,5 +1,8 @@
 <%- include('header') -%>
 
+
+
+
     <div class="container">
         <div class="jumbotron">
             <h1>Order</h1>
@@ -12,22 +15,68 @@
         <form>
             <div class="form-group">
 
-                <label for="something">Supplier:
-<input id="something" list="somethingelse">
-<datalist id="somethingelse">
 
-  <% suppliers.forEach(function(item) { %>
+              <label for="suppliers">Supplier:
+              <input id="suppliers" list="suppliers_list">
+              <datalist id="suppliers_list">
 
-  <option id="supplier_choice" value=<%= item["supplier_name"]%>></option>
+              <% suppliers.forEach(function(item) { %>
 
-  <% }); %>
+              <option id="supplier_choice" value=<%= item["supplier_name"]%>></option>
 
-</datalist>
-</label>
+              <% }); %>
 
+              </datalist>
+              </label>
+
+              <label for="products">Product:
+              <input id="products" list="products_list">
+              <datalist id="products_list">
+              </datalist>
+              </label>
+
+<!-- <select id="item">
+</select> -->
 
 
         </form>
 
         </div>
+
+        <script>
+        <% suppliers.forEach(function(item) { %>
+        <%= item["supplier_name"]%> = new Array([<% item["products"].forEach(function(thing) { %>
+        "<%= thing["product_name"] %>" ,
+        <% }); %>
+        ]);
+          <% }); %>
+
+          <% suppliers.forEach(function(item) { %>
+        <%= item["supplier_name"]%> = <%= item["supplier_name"]%>[0];
+        <% }); %>
+
+        // populateSelect();
+
+        $("#suppliers").bind('input', function () {
+          populateSelect();
+        });
+        //
+        // $(function() {
+        //       $('#suppliers').change(function(){
+        //         populateSelect();
+        //     });
+        //
+        // });
+
+
+
+        function populateSelect(){
+            cat=$('#suppliers').val();
+            $('#products_list').html('');
+               eval(cat).forEach(function(t) {
+                    $('#products_list').append('<option>'+t+'</option>');
+                });
+            }
+
+        </script>
         </body>
