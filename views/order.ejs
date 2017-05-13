@@ -47,10 +47,28 @@
 
         </div>
 
-        <div class="container" id="summary">
+<h1>Order summary</h1>
+<form>
+  <div class="container" id="summary">
+  </form>
 
+  </div>
+
+<div class="row pull-right">
+  <div class="col">
+  <h2>Total price</h2>
 </div>
+<div class="col">
+    <h3 class="pull-right" id="order_total"></h3>
+</div>
+  </div>
+</div>
+
+
+
         <script>
+        document.getElementById("order_total").innerHTML = "30";
+
         <% suppliers.forEach(function(item) { %>
         <%= item["supplier_name"]%> = new Array([<% item["products"].forEach(function(thing) { %>
         "<%= thing["product_name"] %> : <%= thing["product_price"] %> " ,
@@ -94,7 +112,15 @@ function clearBoxes(){
 
             function add_to_order() {
               // /var supplier_order = $('#suppliers').val();
-                document.getElementById('summary').innerHTML += '<p>'+$('#suppliers').val()+'</p>' + '<p>'+$('#products').val()+'</p>'
+                document.getElementById('summary').innerHTML +=
+
+
+                '<div class="form-group"><label for="supplier_name">Supplier name:</label><input type="text" readonly class="form-control" id="supplier_name" value='+
+                $('#suppliers').val()+
+                 '></div><div class="form-group"><label for="product_name">Product name:</label><input type="text" readonly class="form-control" id="product_name" value='+
+                $('#products').val()+
+                '></div><button type="submit" value = "Submit" class="btn btn-default">Submit</button>'
+
                 clearBoxes();
             }
 
