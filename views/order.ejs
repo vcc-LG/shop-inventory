@@ -1,4 +1,6 @@
 <%- include('header') -%>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.4/jspdf.debug.js"></script>
+
 <style>
 
 .spinner {
@@ -36,7 +38,12 @@
   top: 0;
   left: 4px;
 }
+
+  h3 {display:inline;
+  text-align: right;}
+
 </style>
+
     <div class="container">
         <div class="jumbotron">
             <h1>Order</h1>
@@ -55,7 +62,7 @@
 
               <% suppliers.forEach(function(item) { %>
 
-              <option id="supplier_choice" value=<%= item["supplier_name"]%>></option>
+              <option id="supplier_choice" value='<%= item["supplier_name"]+" ("+item["supplier_contact"] %>)' ></option>
 
               <% }); %>
 
@@ -104,22 +111,33 @@
 </div>
         <input type="hidden" id="last_price" >
 
+<div id="content">
+
 
 <h1>Order summary</h1>
 <form>
   <div class="container" id="summary">
-  </form>
-
+</form>
   </div>
 
 <div>
   <div class="col">
   <h2 class="text-right">Total price</h2>
 </div>
-<div class="col">
-    <h3 class="text-right" id="order_total"></h3>
 </div>
-  </div>
+
+<div class="col pull-right">
+
+    <h3 class="text-right">£</h3><h3 class="text-right" id="order_total"></h3>
+
+
+</div>
+<input type="button" id="cmd" class="btn btn-info" value="Print order">
+
+</div>
+
+
+
 </div>
 
 <script>
@@ -138,11 +156,14 @@
         document.getElementById("order_total").innerHTML = 0;
 
         <% suppliers.forEach(function(item) { %>
-        <%= item["supplier_name"]%> = new Array([<% item["products"].forEach(function(thing) { %>
-        "<%= thing["product_name"] %> : <%= thing["product_price"] %> " ,
-        <% }); %>
-        ]);
-          <% }); %>
+
+            <%= item["supplier_name"]%> = new Array([<% item["products"].forEach(function(thing) { %>
+            "<%= thing["product_name"] %> : £<%= thing["product_price"] %> " ,
+            <% }); %>
+            ]);
+
+              <% }); %>
+
 
           <% suppliers.forEach(function(item) { %>
         <%= item["supplier_name"]%> = <%= item["supplier_name"]%>[0];
@@ -158,8 +179,10 @@
           document.getElementById("products").value = "";
         }
 
+
+
         function populateSelect(){
-            cat=$('#suppliers').val();
+            cat=$('#suppliers').val().split("(")[0];
             $('#products_list').html('');
                eval(cat).forEach(function(t) {
                     $('#products_list').append('<option>'+t+'</option>');
@@ -181,25 +204,51 @@
 
             function add_to_order() {
               // console.log($('#suppliers').val().length);
-              if ($('#suppliers').val().length != 0)  {
+              if ($('#suppliers').val().length != 0)   {
               fileId++; // increment fileId to get a unique ID for the new element
-
+              var priceToAdd = parseFloat($('#quantity').val())*(parseFloat($('#products').val().split("£")[1]));
               // /var supplier_order = $('#suppliers').val();
                 document.getElementById('summary').innerHTML +=
 
                 '<div id='+fileId+'><div class="form-group"><label for="supplier_name">Supplier name:</label><input type="text" readonly class="form-control" id="supplier_name" value='+
-                $('#suppliers').val()+
+                $('#suppliers').val().split("(")[0]+
+                '></div><div class="form-group"><label for="supplier_contact">Supplier contact:</label><input type="text" readonly class="form-control" id="supplier_contact" value='+
+               $('#suppliers').val().split("(")[1].split(")")[0]+
                  '></div><div class="form-group"><label for="product_name">Product name:</label><input type="text" readonly class="form-control" id="product_name" value='+
                 $('#products').val()+
+                '></div><div class="form-group"><label for="price_per_unit">Price per unit (£):</label><input type="text" readonly class="form-control" id="price_per_unit" value='+
+               (parseFloat($('#products').val().split("£")[1]))+
                 '></div><div class="form-group"><label for="product_quantity">Quantity:</label><input type="text" readonly class="form-control" id="product_quantity" value='+
                $('#quantity').val()+
-               '></div><a href="" onclick="javascript:removeElement('+fileId + '); return false;">Remove</a></div>';
-               var priceToAdd = parseFloat($('#quantity').val())*(parseFloat($('#products').val().split(":")[1]));
+               '></div><div class="form-group"><label for="cost_for_items">Cost for item(s) (£):</label><input type="text" readonly class="form-control" id="cost_for_items" value='+
+              priceToAdd+
+               '></div><a href="" onclick="javascript:removeElement('+fileId + '); return false;">Remove</a></div><hr />';
                 document.getElementById("order_total").innerHTML = parseFloat($('#order_total').text()) + priceToAdd;
                 document.getElementById("last_price").innerHTML = priceToAdd;
 
                 clearBoxes();
             }}
 
+        </script>
+        <script>
+        $(function () {
+
+          $('#cmd').click(function () {
+            window.print()
+          // var doc = new jsPDF();
+            // $("#cmd").val('');
+            // $("#cmd").css('background-color','transparent');
+            // $("#cmd").css('border','none');
+            //
+            // doc.addHTML($('#content')[0], 15, 15, {
+            //   'background': '#fff',
+            // }, function() {
+            //   doc.save('sample-file.pdf');
+            //   $("#cmd").val('Print order');
+            //   $("#cmd").removeAttr('style');
+            //
+            // });
+          });
+        });
         </script>
         </body>
