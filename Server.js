@@ -53,7 +53,23 @@ router.get("/order", function(req, res, next) {
   });
   });
 
+  app.post('/add_order', function(req, res) {
+    console.log('hello');
+    var supplier_name = req.body.supplier_name;
+    console.log(supplier_name);
+    res.redirect('/new_order');
+});
 
+
+  router.get("/new_order", function(req, res, next) {
+    collection.find({products : {$exists:true}, $where:'this.products.length>0'}, function(e, suppliers) {
+        // console.log(suppliers);
+        res.render(path + "new_order.ejs", {
+            suppliers: suppliers
+        });
+    });
+    });
+  //
 
 app.post('/add_supplier', function(req, res) {
     var tasks = [
