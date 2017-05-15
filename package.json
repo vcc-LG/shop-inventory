@@ -8,14 +8,15 @@
     "start": "node Server.js"
   },
   "dependencies": {
-   "async": "^2.4.0",
+    "async": "^2.4.0",
+    "body-parser": "latest",
     "ejs": "latest",
-   "express": "latest",
-   "mongodb": "^2.2.26",
-   "monk": "^4.0.0",
-   "express-helpers":"latest",
-   "body-parser":"latest"
- },
+    "express": "latest",
+    "express-helpers": "latest",
+    "moment": "^2.18.1",
+    "mongodb": "^2.2.26",
+    "monk": "^4.0.0"
+  },
   "author": "",
   "license": "ISC"
 }

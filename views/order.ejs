@@ -13,9 +13,26 @@
   <h1>Existing orders</h1>
 
 
-  <ul class="list-group">
-    <li class="list-group-item disabled">Cras justo odio</li>
-    <li class="list-group-item">Dapibus ac facilisis in</li>
-  </ul>
+
+    <div class="container">
+      <p>
+
+      </p>
+      <% orders.forEach(function(item) { %>
+        <div class="list-group">
+          <a href='view_order/<%= item["_id"] %>' class="btn btn-default btn-block" role="button">
+
+            <p class="list-group-item-text">
+                Order ID:
+                <%= item["_id"] %>
+            </p>
+            <p class="list-group-item-text">
+                Order date:
+                <%= item["order_datetime"] %>
+            </p>
+          </a>
+        </div>
+
+          <% }); %>
 
 </div>

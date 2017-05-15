@@ -16,6 +16,7 @@ app.use(bodyParser.urlencoded({
     extended: true
 }));
 var ObjectId = require('mongodb').ObjectID;
+var moment = require('moment');
 
 MongoClient.connect(url, function(err, db) {
     if (err) throw err;
@@ -43,23 +44,15 @@ router.get("/add_supplier", function(req, res, next) {
 });
 
 router.get("/order", function(req, res, next) {
-  db.get('shop_collection').find({products : {$exists:true}, $where:'this.products.length>0'}, function(e, suppliers) {
+  db.get('order_collection').find({}, function(e, orders) {
       // console.log(suppliers);
       res.render(path + "order.ejs", {
-          suppliers: suppliers
+          orders: orders
       });
   });
-  });
+});
 
   app.post('/add_order', function(req, res) {
-    // console.log('hello');
-    // var supplier_names = req.body.supplier_name;
-    // var supplier_contacts = req.body.supplier_contact;
-    // var product_names = req.body.product_name;
-    // var price_per_units = req.body.price_per_unit;
-    // var product_quantities = req.body.product_quantity;
-    // var cost_for_items = req.body.cost_for_items;
-    // var order_total = req.body.order_total;
 
     var tasks = [
         function(callback) {
@@ -79,17 +72,44 @@ router.get("/order", function(req, res, next) {
           console.log(cost_for_items);
           console.log(order_total);
 
-
+          var items = [];
+          var number_of_items = supplier_names.length;
+          console.log(number_of_items);
+          if (number_of_items == Array){
+          for (var i = 0; i < number_of_items; i++) {
+            items.push([
+              supplier_names[i],
+              supplier_contacts[i],
+              product_names[i],
+              price_per_units[i],
+              product_quantities[i],
+              cost_for_items[i],
+            ])
+          }
+        }
+        else {
+          items.push([
+            supplier_names,
+            supplier_contacts,
+            product_names,
+            price_per_units,
+            product_quantities,
+            cost_for_items,
+          ])
+        }
+          console.log(items);
             var insertDocument = function(db, callback) {
-                db.collection('shop_collection').insertOne({
-                    "supplier_name": supplier_name,
-                    "supplier_contact": supplier_contact
+                db.collection('order_collection').insertOne({
+                  "items":items,
+                  "order_total":order_total,
+                  "order_datetime":moment().format("dddd, MMMM Do YYYY, h:mm:ss a")
                 }, function(err, result) {
                     assert.equal(err, null);
-                    console.log("Inserted a document into the collection.");
+                    console.log("Inserted a document into the collection");
                     callback();
                 });
             };
+
             MongoClient.connect(url, function(err, db) {
                 assert.equal(null, err);
                 insertDocument(db, function() {
@@ -108,7 +128,7 @@ router.get("/order", function(req, res, next) {
 
 
   router.get("/new_order", function(req, res, next) {
-    collection.find({products : {$exists:true}, $where:'this.products.length>0'}, function(e, suppliers) {
+    db.get('shop_collection').find({products : {$exists:true}, $where:'this.products.length>0'}, function(e, suppliers) {
         // console.log(suppliers);
         res.render(path + "new_order.ejs", {
             suppliers: suppliers
@@ -130,7 +150,7 @@ app.post('/add_supplier', function(req, res) {
                     "supplier_contact": supplier_contact
                 }, function(err, result) {
                     assert.equal(err, null);
-                    console.log("Inserted a document into the collection.");
+                    console.log("Inserted a document into the db.get('shop_collection').");
                     callback();
                 });
             };
@@ -152,7 +172,7 @@ app.post('/add_supplier', function(req, res) {
 
 app.get('/edit/:id', function(req, res, next) {
     // console.log(req.params.id);
-    collection.find({
+    db.get('shop_collection').find({
         "_id": ObjectId(req.params.id)
     }, function(e, supplier_edit) {
         // console.log(supplier_edit);
@@ -165,12 +185,28 @@ app.get('/edit/:id', function(req, res, next) {
 
 app.get('/add_product/:id', function(req, res, next) {
     // console.log(req.params.id);
-    collection.find({
+    db.get('shop_collection').find({
         "_id": ObjectId(req.params.id)
     }, function(e, data) {
         // console.log(supplier_edit);
         res.render(path + "add_product.ejs", {
             supplier: data
+        });
+    });
+});
+
+app.get('/view_order/:id', function(req, res, next) {
+
+    // console.log(req.params.id);
+    // res.render(path+"view_order.ejs",{
+    //
+    // });
+    db.get('order_collection').find({
+        "_id": ObjectId(req.params.id)
+    }, function(e, order) {
+        // console.log(supplier_edit);
+        res.render(path + "view_order.ejs", {
+            order: order
         });
     });
 });
@@ -343,7 +379,7 @@ router.get("/edit_supplier", function(req, res, next) {
 
 
 router.get("/list_suppliers", function(req, res, next) {
-    collection.find({}, function(e, suppliers) {
+    db.get('shop_collection').find({}, function(e, suppliers) {
         // console.log(suppliers);
         res.render(path + "list_suppliers.ejs", {
             suppliers: suppliers
