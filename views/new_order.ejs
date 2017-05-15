@@ -3,6 +3,9 @@
 
 <style>
 
+#order_total {
+  border:0;
+}
 .spinner {
   width: 100px;
 }
@@ -76,6 +79,7 @@
 
 </p>
   <label for="products">Product:
+
   <input id="products" list="products_list">
   <datalist id="products_list">
   </datalist>
@@ -85,6 +89,9 @@
 </div>
 <div class="row">
   <div class="container"><label for="products">Quantity:
+    <p>
+
+    </p>
     <div class="input-group spinner">
       <input type="text" class="form-control" id="quantity" value="1">
       <div class="input-group-btn-vertical">
@@ -102,17 +109,15 @@
 <div class="row">
   <div class="container">
 
-
-
-              <input type="button" onclick="add_to_order();" class="btn btn-info btn-large" value="Add to order">
+              <input type="button" onclick="add_to_order();" class="btn btn-info btn-large pull-right" value="Add to order">
 
             </div>
 
 </div>
+
 <form action="add_order" method="post">
 
         <input type="hidden" name="last_price" id="last_price" value=0 >
-
 <div id="content">
 
 
@@ -122,19 +127,22 @@
 
 <div>
   <div class="col">
-  <h2 class="text-right">Total price</h2>
+  <h2 class="text-left">Total price</h2>
 </div>
 </div>
 
-<div class="col pull-right">
+<div class="col pull-left">
 
-    <h3 class="text-right">£</h3><h3 class="text-right" id="order_total"></h3>
-
+    <h3>£</h3><h3 class="text-right" ><input type="text" name="order_total" id="order_total" value=0 ></h3>
 
 </div>
 
 <!-- <a href='add_order' class="btn btn-primary btn-large"><span class="glyphicon glyphicon-floppy-disk"></span> Save order</a> -->
+
+<div class="col pull-right">
+
   <button type="submit" value = "Submit" class="btn btn-default">Save order</button>
+</div>
 </form>
 
 
@@ -195,7 +203,7 @@
             function removeElement(elementId) {
                 // Removes an element from the document
 
-                document.getElementById("order_total").innerHTML = parseFloat($('#order_total').text()) - prices_dict[elementId] ;
+                document.getElementById("order_total").valuechro = parseFloat($('#order_total').text()) - prices_dict[elementId] ;
 
                 var element = document.getElementById(elementId);
                 element.parentNode.removeChild(element);
@@ -227,7 +235,9 @@
                '></div><div class="form-group"><label for="cost_for_items">Cost for item(s) (£):</label><input name="product_price_total" type="text" readonly class="form-control" id="cost_for_items" value='+
               priceToAdd+
                '></div><a href="" onclick="javascript:removeElement('+fileId + '); return false;">Remove</a></div><hr />';
-                document.getElementById("order_total").innerHTML = parseFloat($('#order_total').text()) + priceToAdd;
+               var new_total = parseFloat($('#order_total').text()) + priceToAdd;
+                document.getElementById("order_total").innerHTML = new_total;
+                document.getElementById("order_total").value = new_total;
                 document.getElementById("last_price").value = priceToAdd;
                 prices_dict[fileId] = parseFloat(priceToAdd);
                 clearBoxes();

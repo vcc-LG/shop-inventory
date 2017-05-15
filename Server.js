@@ -24,7 +24,7 @@ MongoClient.connect(url, function(err, db) {
 });
 
 const db = require('monk')('localhost/shopdb')
-const collection = db.get('shop_collection')
+// const collection = db.get('shop_collection')
 db.then(() => {
     console.log('Connected correctly to server')
 })
@@ -42,10 +42,8 @@ router.get("/add_supplier", function(req, res, next) {
     res.render(path + 'add_supplier.ejs');
 });
 
-
-
 router.get("/order", function(req, res, next) {
-  collection.find({products : {$exists:true}, $where:'this.products.length>0'}, function(e, suppliers) {
+  db.get('shop_collection').find({products : {$exists:true}, $where:'this.products.length>0'}, function(e, suppliers) {
       // console.log(suppliers);
       res.render(path + "order.ejs", {
           suppliers: suppliers
@@ -54,10 +52,58 @@ router.get("/order", function(req, res, next) {
   });
 
   app.post('/add_order', function(req, res) {
-    console.log('hello');
-    var supplier_name = req.body.supplier_name;
-    console.log(supplier_name);
-    res.redirect('/new_order');
+    // console.log('hello');
+    // var supplier_names = req.body.supplier_name;
+    // var supplier_contacts = req.body.supplier_contact;
+    // var product_names = req.body.product_name;
+    // var price_per_units = req.body.price_per_unit;
+    // var product_quantities = req.body.product_quantity;
+    // var cost_for_items = req.body.cost_for_items;
+    // var order_total = req.body.order_total;
+
+    var tasks = [
+        function(callback) {
+          var supplier_names = req.body.supplier_name;
+          var supplier_contacts = req.body.supplier_contact;
+          var product_names = req.body.product_name;
+          var price_per_units = req.body.product_price;
+          var product_quantities = req.body.product_quantity;
+          var cost_for_items = req.body.product_price_total;
+          var order_total = req.body.order_total;
+
+          console.log(supplier_names);
+          console.log(supplier_contacts);
+          console.log(product_names);
+          console.log(price_per_units);
+          console.log(product_quantities);
+          console.log(cost_for_items);
+          console.log(order_total);
+
+
+            var insertDocument = function(db, callback) {
+                db.collection('shop_collection').insertOne({
+                    "supplier_name": supplier_name,
+                    "supplier_contact": supplier_contact
+                }, function(err, result) {
+                    assert.equal(err, null);
+                    console.log("Inserted a document into the collection.");
+                    callback();
+                });
+            };
+            MongoClient.connect(url, function(err, db) {
+                assert.equal(null, err);
+                insertDocument(db, function() {
+                    db.close();
+                    callback();
+                });
+            });
+        }
+    ];
+
+        async.parallel(tasks, function(err) {
+            if (err) return next(err);
+            res.redirect('/order');
+    });
 });
 
 
