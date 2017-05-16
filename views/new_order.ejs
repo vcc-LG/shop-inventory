@@ -203,7 +203,7 @@
             function removeElement(elementId) {
                 // Removes an element from the document
 
-                document.getElementById("order_total").valuechro = parseFloat($('#order_total').text()) - prices_dict[elementId] ;
+                document.getElementById("order_total").value = parseFloat($('#order_total').text()) - prices_dict[elementId] ;
 
                 var element = document.getElementById(elementId);
                 element.parentNode.removeChild(element);

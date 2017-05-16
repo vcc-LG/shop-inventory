@@ -1,0 +1,79 @@
+<%- include('header') -%>
+<div class="container">
+    <div class="jumbotron">
+      <h1>Edit order</h1>
+    </div>
+</div>
+
+<script>
+
+function removeElement(elementId) {
+    // Removes an element from the document
+   console.log(elementId);
+   console.log(document.getElementById("order_total").value );
+   console.log(document.getElementById('cost-for-items-'+elementId).value);
+    document.getElementById("order_total").value = parseFloat(document.getElementById("order_total").value) - document.getElementById('cost-for-items-'+elementId).value;
+
+    var element = document.getElementById(elementId);
+    element.parentNode.removeChild(element);
+
+}
+
+</script>
+<div class="container">
+  <h1>Order summary</h1>
+
+  <% for(var i=0; i<order['items'][0]['product_name'].length; i++) { %>
+
+    <div id= <%= i.toString() %> >
+    <form>
+    <div class="form-group">
+      <label for="supplier_name">Supplier name:</label>
+      <input type="text" readonly class="form-control" value=<%= order['items'][0]['supplier_name'][i] %>>
+    </div>
+    <div class="form-group">
+      <label for="supplier_name">Supplier contact:</label>
+      <input type="text" readonly class="form-control" value=<%= order['items'][0]['supplier_contact'][i] %>>
+    </div>
+
+    <div class="form-group">
+      <label for="supplier_name">Product name:</label>
+      <input type="text" readonly class="form-control" value=<%= order['items'][0]['product_name'][i] %>>
+    </div>
+
+    <div class="form-group">
+      <label for="supplier_name">Price per unit (£):</label>
+      <input type="text" readonly class="form-control" value=<%= order['items'][0]['product_price'][i] %>>
+    </div>
+
+    <div class="form-group">
+      <label for="supplier_name">Quantity</label>
+      <input type="text" readonly class="form-control" value=<%= order['items'][0]['product_quantity'][i] %>>
+    </div>
+
+    <div class="form-group">
+      <label for="cost_for_items">Cost for item(s) (£)</label>
+      <input type="text" id="cost-for-items-<%= i.toString() %>" readonly class="form-control" value=<%= order['items'][0]['product_total_cost'][i] %>>
+    </div>
+<a href="" onclick="removeElement(<%= i %>);return false;">Remove</a>
+  </form>
+<hr/>
+</div>
+    <% } %>
+
+
+    <div>
+      <div class="col">
+      <h2 class="text-left">Total price</h2>
+    </div>
+    </div>
+
+    <div class="col pull-left">
+        <h3>£<input type="text" name="order_total" id="order_total" value=<%= order['order_total'] %> ></h3>
+    </div>
+
+    <div class="col pull-right">
+      <button type="submit" value = "Submit" class="btn btn-default">Save order</button>
+    </div>
+
+</div>

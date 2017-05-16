@@ -182,6 +182,19 @@ app.get('/edit/:id', function(req, res, next) {
     });
 });
 
+app.get('/edit_order/:id', function(req, res, next) {
+    // console.log(req.params.id);
+    db.get('order_collection').find({
+        "_id": ObjectId(req.params.id)
+    }, function(e, order_edit) {
+        // console.log(supplier_edit);
+        res.render(path + "edit_order.ejs", {
+            order: order_edit[0]
+        });
+    });
+});
+
+
 
 app.get('/add_product/:id', function(req, res, next) {
     // console.log(req.params.id);
@@ -238,7 +251,7 @@ app.post('/add_product', function(req, res) {
                 assert.equal(null, err);
                 updateDocument(db, function() {
                     db.close();
-                    callback();
+                    callbadck();
                 });
             });
         }
@@ -282,12 +295,42 @@ app.get('/delete/:id', function(req, res, next) {
     });
 });
 
+app.get('/delete_order/:id', function(req, res, next) {
+  // console.log('hello');
+    var tasks = [
+        function(callback) {
+          var supplier_id = req.params.id;
+
+            var deleteDocument = function(db, callback) {
+                db.collection('order_collection').deleteOne(
+                  {"_id":ObjectId(supplier_id)},function(err, result) {
+                    assert.equal(err, null);
+                    console.log("Removed document");
+                    callback();
+                });
+            };
+            MongoClient.connect(url, function(err, db) {
+                assert.equal(null, err);
+                deleteDocument(db, function() {
+                    db.close();
+                    callback();
+                });
+            });
+        }
+    ];
+
+    async.parallel(tasks, function(err) {
+        if (err) return next(err);
+        res.redirect('/order');
+    });
+});
+
 app.post('/edit_supplier', function(req, res) {
   console.log('hello');
     var supplier_name = req.body.supplier_name;
     var supplier_contact = req.body.supplier_contact;
     var supplier_id = req.body.supplier_id;
-    // 
+    //
     // console.log(supplier_name);
     // console.log(supplier_contact);
     // console.log(supplier_id);
