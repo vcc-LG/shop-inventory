@@ -5,3 +5,44 @@
     </div>
 </div>
 <div class="container">
+
+  <h4><%= order['order_datetime']%></h4>
+  <h4>Total: £<%= order['order_total']%></h4>
+
+  <% for(var i=0; i<order['items'][0]['product_name'].length; i++) { %>
+    <form>
+    <div class="form-group">
+      <label for="supplier_name">Supplier name:</label>
+      <input type="text" readonly class="form-control" value=<%= order['items'][0]['supplier_name'][i] %>>
+    </div>
+    <div class="form-group">
+      <label for="supplier_name">Supplier contact:</label>
+      <input type="text" readonly class="form-control" value=<%= order['items'][0]['supplier_contact'][i] %>>
+    </div>
+
+    <div class="form-group">
+      <label for="supplier_name">Product name:</label>
+      <input type="text" readonly class="form-control" value=<%= order['items'][0]['product_name'][i] %>>
+    </div>
+
+    <div class="form-group">
+      <label for="supplier_name">Price per unit (£):</label>
+      <input type="text" readonly class="form-control" value=<%= order['items'][0]['product_price'][i] %>>
+    </div>
+
+    <div class="form-group">
+      <label for="supplier_name">Quantity</label>
+      <input type="text" readonly class="form-control" value=<%= order['items'][0]['product_quantity'][i] %>>
+    </div>
+
+    <div class="form-group">
+      <label for="supplier_name">Cost for item(s) (£)</label>
+      <input type="text" readonly class="form-control" value=<%= order['items'][0]['product_total_cost'][i] %>>
+    </div>
+
+  </form>
+<hr/>
+    <% } %>
+
+
+</div>

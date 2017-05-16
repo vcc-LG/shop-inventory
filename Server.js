@@ -64,40 +64,40 @@ router.get("/order", function(req, res, next) {
           var cost_for_items = req.body.product_price_total;
           var order_total = req.body.order_total;
 
-          console.log(supplier_names);
-          console.log(supplier_contacts);
-          console.log(product_names);
-          console.log(price_per_units);
-          console.log(product_quantities);
-          console.log(cost_for_items);
-          console.log(order_total);
+          // console.log(supplier_names);
+          // console.log(supplier_contacts);
+          // console.log(product_names);
+          // console.log(price_per_units);
+          // console.log(product_quantities);
+          // console.log(cost_for_items);
+          // console.log(order_total);
 
           var items = [];
           var number_of_items = supplier_names.length;
-          console.log(number_of_items);
+          // console.log(number_of_items);
           if (number_of_items == Array){
           for (var i = 0; i < number_of_items; i++) {
-            items.push([
-              supplier_names[i],
-              supplier_contacts[i],
-              product_names[i],
-              price_per_units[i],
-              product_quantities[i],
-              cost_for_items[i],
-            ])
+            items.push({
+              "supplier_name":supplier_names[i],
+              "supplier_contact":supplier_contacts[i],
+              "product_name":product_names[i],
+              "product_price":price_per_units[i],
+              "product_quantity":product_quantities[i],
+              "product_total_cost":cost_for_items[i],
+            })
           }
         }
         else {
-          items.push([
-            supplier_names,
-            supplier_contacts,
-            product_names,
-            price_per_units,
-            product_quantities,
-            cost_for_items,
-          ])
+          items.push({
+            "supplier_name":supplier_names,
+            "supplier_contact":supplier_contacts,
+            "product_name":product_names,
+            "product_price":price_per_units,
+            "product_quantity":product_quantities,
+            "product_total_cost":cost_for_items,
+          })
         }
-          console.log(items);
+          // console.log(items);
             var insertDocument = function(db, callback) {
                 db.collection('order_collection').insertOne({
                   "items":items,
@@ -142,8 +142,8 @@ app.post('/add_supplier', function(req, res) {
         function(callback) {
             var supplier_name = req.body.supplier_name;
             var supplier_contact = req.body.supplier_contact;
-            console.log(supplier_name);
-            console.log(supplier_contact);
+            // console.log(supplier_name);
+            // console.log(supplier_contact);
             var insertDocument = function(db, callback) {
                 db.collection('shop_collection').insertOne({
                     "supplier_name": supplier_name,
@@ -204,9 +204,9 @@ app.get('/view_order/:id', function(req, res, next) {
     db.get('order_collection').find({
         "_id": ObjectId(req.params.id)
     }, function(e, order) {
-        // console.log(supplier_edit);
+        // console.log(order);
         res.render(path + "view_order.ejs", {
-            order: order
+            order: order[0]
         });
     });
 });
@@ -253,7 +253,7 @@ app.post('/add_product', function(req, res) {
 
 
 app.get('/delete/:id', function(req, res, next) {
-  console.log('hello');
+  // console.log('hello');
     var tasks = [
         function(callback) {
           var supplier_id = req.params.id;
@@ -287,10 +287,10 @@ app.post('/edit_supplier', function(req, res) {
     var supplier_name = req.body.supplier_name;
     var supplier_contact = req.body.supplier_contact;
     var supplier_id = req.body.supplier_id;
-
-    console.log(supplier_name);
-    console.log(supplier_contact);
-    console.log(supplier_id);
+    // 
+    // console.log(supplier_name);
+    // console.log(supplier_contact);
+    // console.log(supplier_id);
     var tasks = [
         function(callback) {
             var supplier_name = req.body.supplier_name;
