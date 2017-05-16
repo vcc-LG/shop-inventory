@@ -1,5 +1,4 @@
 <%- include('header') -%>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.4/jspdf.debug.js"></script>
 
 <style>
 
@@ -141,7 +140,7 @@
 
 <div class="col pull-right">
 
-  <button type="submit" value = "Submit" class="btn btn-default">Save order</button>
+  <button type="submit" id="submitBtn" value = "Submit" class="btn btn-default">Save order</button>
 </div>
 </form>
 
@@ -204,7 +203,9 @@
                 // Removes an element from the document
 
                 document.getElementById("order_total").value = parseFloat($('#order_total').text()) - prices_dict[elementId] ;
-
+                if (document.getElementById("order_total").value == 0){
+                  document.getElementById("submitBtn").disabled = true;
+                }
                 var element = document.getElementById(elementId);
                 element.parentNode.removeChild(element);
                 $('#summary hr').remove();
@@ -240,6 +241,9 @@
                 document.getElementById("order_total").value = new_total;
                 document.getElementById("last_price").value = priceToAdd;
                 prices_dict[fileId] = parseFloat(priceToAdd);
+                if (document.getElementById("order_total").value > 0){
+                  document.getElementById("submitBtn").disabled = false;
+                }
                 clearBoxes();
             }}
 

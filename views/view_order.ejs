@@ -9,9 +9,9 @@
   <h4><%= order['order_datetime']%></h4>
   <h4>Total: £<%= order['order_total']%></h4>
 
+  <%if (order['items'][0]['product_name'][0].length > 1) { %>
   <% for(var i=0; i<order['items'][0]['product_name'].length; i++) { %>
-    <form>
-    <div id=i>
+    <div id= <%= i.toString() %> >
       <div class="form-group">
       <label for="supplier_name">Supplier name:</label>
       <input type="text" readonly class="form-control" value=<%= order['items'][0]['supplier_name'][i] %>>
@@ -41,9 +41,44 @@
       <input type="text" readonly class="form-control" value=<%= order['items'][0]['product_total_cost'][i] %>>
     </div>
 </div>
-  </form>
 <hr/>
-    <% } %>
+<% } %>
+    <% } else { %>
+
+      <form>
+      <div id=0>
+        <div class="form-group">
+        <label for="supplier_name">Supplier name:</label>
+        <input type="text" readonly class="form-control" value=<%= order['items'][0]['supplier_name'] %>>
+      </div>
+      <div class="form-group">
+        <label for="supplier_name">Supplier contact:</label>
+        <input type="text" readonly class="form-control" value=<%= order['items'][0]['supplier_contact'] %>>
+      </div>
+
+      <div class="form-group">
+        <label for="supplier_name">Product name:</label>
+        <input type="text" readonly class="form-control" value=<%= order['items'][0]['product_name'] %>>
+      </div>
+
+      <div class="form-group">
+        <label for="supplier_name">Price per unit (£):</label>
+        <input type="text" readonly class="form-control" value=<%= order['items'][0]['product_price'] %>>
+      </div>
+
+      <div class="form-group">
+        <label for="supplier_name">Quantity</label>
+        <input type="text" readonly class="form-control" value=<%= order['items'][0]['product_quantity'] %>>
+      </div>
+
+      <div class="form-group">
+        <label for="supplier_name">Cost for item(s) (£)</label>
+        <input type="text" readonly class="form-control" value=<%= order['items'][0]['product_total_cost'] %>>
+      </div>
+  </div>
+    </form>
+  <hr/>
+  <% } %>
 
     <span class="pull-right button-group">
     <a href='../edit_order/<%= order["_id"] %>' class="btn btn-warning"><span class="glyphicon glyphicon-edit"></span> Edit order</a>

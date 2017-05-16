@@ -63,7 +63,6 @@ router.get("/order", function(req, res, next) {
           var product_quantities = req.body.product_quantity;
           var cost_for_items = req.body.product_price_total;
           var order_total = req.body.order_total;
-
           // console.log(supplier_names);
           // console.log(supplier_contacts);
           // console.log(product_names);
@@ -127,15 +126,16 @@ router.get("/order", function(req, res, next) {
 });
 
 
-  router.get("/new_order", function(req, res, next) {
+
+router.get("/new_order", function(req, res, next) {
     db.get('shop_collection').find({products : {$exists:true}, $where:'this.products.length>0'}, function(e, suppliers) {
         // console.log(suppliers);
         res.render(path + "new_order.ejs", {
             suppliers: suppliers
         });
     });
-    });
-  //
+});
+
 
 app.post('/add_supplier', function(req, res) {
     var tasks = [
@@ -184,14 +184,32 @@ app.get('/edit/:id', function(req, res, next) {
 
 app.get('/edit_order/:id', function(req, res, next) {
     // console.log(req.params.id);
-    db.get('order_collection').find({
-        "_id": ObjectId(req.params.id)
-    }, function(e, order_edit) {
-        // console.log(supplier_edit);
+
+    var locals = {};
+    var tasks = [
+        // Load users
+        function(callback) {
+            db.collection('shop_collection').find({products : {$exists:true}, $where:'this.products.length>0'}, function(e, suppliers) {
+                locals.suppliers = suppliers;
+                callback();
+            });
+        },
+        function(callback) {
+            db.collection('order_collection').find({"_id": ObjectId(req.params.id)}, function(e, order_edit) {
+                locals.order = order_edit;
+                callback();
+            });
+        }
+    ];
+
+    async.parallel(tasks, function(err) { //This function gets called after the two tasks have called their "task callbacks"
+        if (err) return next(err); //If an error occurred, let express handle it by calling the `next` function
+        // console.log(locals.suppliers[0]);
         res.render(path + "edit_order.ejs", {
-            order: order_edit[0]
+            order: locals.order[0],
+            suppliers: locals.suppliers
         });
-    });
+});
 });
 
 
@@ -429,6 +447,78 @@ router.get("/list_suppliers", function(req, res, next) {
         });
     });
 });
+
+
+app.post('/update_order', function(req, res) {
+// console.log('hello');
+  var tasks = [
+      function(callback) {
+        var supplier_names = req.body.supplier_name;
+        var supplier_contacts = req.body.supplier_contact;
+        var product_names = req.body.product_name;
+        var price_per_units = req.body.product_price;
+        var product_quantities = req.body.product_quantity;
+        var cost_for_items = req.body.product_price_total;
+        var order_total = req.body.order_total;
+        var order_id = req.body.order_id;
+
+        var items = [];
+        var number_of_items = supplier_names.length;
+        // console.log(number_of_items);
+        if (number_of_items == Array){
+        for (var i = 0; i < number_of_items; i++) {
+          items.push({
+            "supplier_name":supplier_names[i],
+            "supplier_contact":supplier_contacts[i],
+            "product_name":product_names[i],
+            "product_price":price_per_units[i],
+            "product_quantity":product_quantities[i],
+            "product_total_cost":cost_for_items[i],
+          })
+        }
+      }
+      else {
+        items.push({
+          "supplier_name":supplier_names,
+          "supplier_contact":supplier_contacts,
+          "product_name":product_names,
+          "product_price":price_per_units,
+          "product_quantity":product_quantities,
+          "product_total_cost":cost_for_items,
+        })
+      }
+        // console.log(items);
+          var insertDocument = function(db, callback) {
+              db.collection('order_collection').update({"_id": ObjectId(order_id)},
+              {
+                "items":items,
+                "order_total":order_total,
+                "order_datetime":moment().format("dddd, MMMM Do YYYY, h:mm:ss a")
+              }, function(err, result) {
+                  assert.equal(err, null);
+                  console.log("Inserted a document into the collection");
+                  callback();
+              });
+          };
+
+          MongoClient.connect(url, function(err, db) {
+              assert.equal(null, err);
+              insertDocument(db, function() {
+                  db.close();
+                  callback();
+              });
+          });
+      }
+  ];
+
+      async.parallel(tasks, function(err) {
+          if (err) return next(err);
+          res.redirect('/order');
+  });
+});
+
+
+
 
 app.use("/", router);
 
