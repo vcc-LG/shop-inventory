@@ -260,7 +260,6 @@ app.post('/add_product', function(req, res) {
                     }  }
                   }
                 , function(err, result) {
-                    assert.equal(err, null);
                     console.log("Updated document");
                     callback();
                 });
@@ -269,7 +268,7 @@ app.post('/add_product', function(req, res) {
                 assert.equal(null, err);
                 updateDocument(db, function() {
                     db.close();
-                    callbadck();
+                    callback();
                 });
             });
         }
