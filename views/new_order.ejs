@@ -5,46 +5,13 @@
 #order_total {
   border:0;
 }
-.spinner {
-  width: 100px;
-}
-.spinner input {
-  text-align: right;
-}
-.input-group-btn-vertical {
-  position: relative;
-  white-space: nowrap;
-  width: 1%;
-  vertical-align: middle;
-  display: table-cell;
-}
-.input-group-btn-vertical > .btn {
-  display: block;
-  float: none;
-  width: 100%;
-  max-width: 100%;
-  padding: 8px;
-  margin-left: -1px;
-  position: relative;
-  border-radius: 0;
-}
-.input-group-btn-vertical > .btn:first-child {
-  border-top-right-radius: 4px;
-}
-.input-group-btn-vertical > .btn:last-child {
-  margin-top: -2px;
-  border-bottom-right-radius: 4px;
-}
-.input-group-btn-vertical i{
-  position: absolute;
-  top: 0;
-  left: 4px;
-}
 
   h3 {display:inline;
   text-align: right;}
 
 </style>
+
+<script src="http://www.virtuosoft.eu/code/bootstrap-touchspin/bootstrap-touchspin/v3.0.1/jquery.bootstrap-touchspin.js"></script>
 
     <div class="container">
         <div class="jumbotron">
@@ -60,15 +27,16 @@
 
               <label for="suppliers">Supplier:
               <input id="suppliers" list="suppliers_list">
-              <datalist id="suppliers_list">
+              <select class="form-control" id="suppliers_list">
+                <option disabled selected value></option>
 
               <% suppliers.forEach(function(item) { %>
 
-              <option id="supplier_choice" value='<%= item["supplier_name"]+" ("+item["supplier_contact"] %>)' ></option>
+              <option id="supplier_choice" value='<%= item["supplier_name"]+" ("+item["supplier_contact"] %>)' ><%= item["supplier_name"]+" ("+item["supplier_contact"] %>)</option>
 
               <% }); %>
 
-              </datalist>
+            </select>
               </label>
 </div>
 </div>
@@ -80,28 +48,24 @@
   <label for="products">Product:
 
   <input id="products" list="products_list">
-  <datalist id="products_list">
-  </datalist>
+  <select class="form-control" id="products_list">
+  </select>
   </label>
 </div>
 
 </div>
 <div class="row">
   <div class="container"><label for="products">Quantity:
-    <p>
-
-    </p>
-    <div class="input-group spinner">
-      <input type="text" class="form-control" id="quantity" value="1">
-      <div class="input-group-btn-vertical">
-        <button class="btn btn-default" type="button"><i class="fa fa-caret-up"></i></button>
-        <button class="btn btn-default" type="button"><i class="fa fa-caret-down"></i></button>
-      </div>
-    </div>
-  </div>
-
+</div>
 <p>
 
+</p>
+ <div class="col-xs-4">
+    <input id="quantity" type="text" value="1" name="quantity">
+    <script>
+        $("input[name='quantity']").TouchSpin({min:1});
+    </script><p>
+</div>
 </p>
 
 </div>
@@ -164,6 +128,8 @@
 </script>
 
         <script>
+        document.getElementById("submitBtn").disabled = true;
+
         document.getElementById("order_total").innerHTML = 0;
 
         <% suppliers.forEach(function(item) { %>
@@ -179,7 +145,7 @@
               <%= item["supplier_name"].split(' ').join('_')%> = <%= item["supplier_name"].split(' ').join('_')%>[0];
               <% }); %>
 
-        $("#suppliers").bind('input', function () {
+        $("#suppliers_list").change(function () {
           populateSelect();
         });
 
@@ -190,9 +156,10 @@
 
 
         function populateSelect(){
-            cat=$('#suppliers').val().split(" (")[0].split(' ').join('_');
+            cat=$('#supplier_choice').val().split(" (")[0].split(' ').join('_');
             $('#products_list').html('');
                eval(cat).forEach(function(t) {
+                 console.log(t);
                     $('#products_list').append('<option>'+t+'</option>');
                 });
             }
@@ -204,9 +171,13 @@
                 if (document.getElementById("order_total").value == 0){
                   document.getElementById("submitBtn").disabled = true;
                 }
+                else {
+                  document.getElementById("submitBtn").disabled = false;
+                }
                 var element = document.getElementById(elementId);
                 element.parentNode.removeChild(element);
                 $('#summary hr').remove();
+
 
             }
 
@@ -215,20 +186,20 @@
 
             function add_to_order() {
               // console.log($('#suppliers').val().length);
-              if ($('#suppliers').val().length != 0)   {
+              if ($('#suppliers_list').val().length != 0 && $('#products_list').val().length != 0)   {
               fileId++; // increment fileId to get a unique ID for the new element
-              var priceToAdd = parseFloat($('#quantity').val())*(parseFloat($('#products').val().split("£")[1]));
+              var priceToAdd = parseFloat($('#quantity').val())*(parseFloat($('#products_list').val().split("£")[1]));
               // /var supplier_order = $('#suppliers').val();
                 document.getElementById('summary').innerHTML +=
 
                 '<div id='+fileId+'><div class="form-group"><label for="supplier_name">Supplier name:</label><input name="supplier_name" type="text" readonly class="form-control" id="supplier_name" value="'+
-                $('#suppliers').val().split("(")[0]+
+                $('#suppliers_list').val().split("(")[0]+
                 '"></div><div class="form-group"><label for="supplier_contact">Supplier contact:</label><input type="text" name="supplier_contact" readonly class="form-control" id="supplier_contact" value="'+
-               $('#suppliers').val().split("(")[1].split(")")[0]+
+               $('#suppliers_list').val().split("(")[1].split(")")[0]+
                  '"></div><div class="form-group"><label for="product_name">Product name:</label><input type="text" name="product_name" readonly class="form-control" id="product_name" value="'+
-                $('#products').val()+
+                $('#products_list').val().split(' :')[0]+
                 '"></div><div class="form-group"><label for="price_per_unit">Price per unit (£):</label><input name="product_price"  type="text" readonly class="form-control" id="price_per_unit" value='+
-               (parseFloat($('#products').val().split("£")[1]))+
+               (parseFloat($('#products_list').val().split("£")[1]))+
                 '></div><div class="form-group"><label for="product_quantity">Quantity:</label><input type="text" name="product_quantity" readonly class="form-control" id="product_quantity" value='+
                $('#quantity').val()+
                '></div><div class="form-group"><label for="cost_for_items">Cost for item(s) (£):</label><input name="product_price_total" type="text" readonly class="form-control" id="cost_for_items" value='+
