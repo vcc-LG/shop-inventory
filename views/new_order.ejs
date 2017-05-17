@@ -26,7 +26,6 @@
           <div class="container">
 
               <label for="suppliers">Supplier:
-              <input id="suppliers" list="suppliers_list">
               <select class="form-control" id="suppliers_list">
                 <option disabled selected value></option>
 
@@ -47,7 +46,6 @@
 </p>
   <label for="products">Product:
 
-  <input id="products" list="products_list">
   <select class="form-control" id="products_list">
   </select>
   </label>
@@ -60,7 +58,7 @@
 <p>
 
 </p>
- <div class="col-xs-4">
+ <div class="col-xs-6">
     <input id="quantity" type="text" value="1" name="quantity">
     <script>
         $("input[name='quantity']").TouchSpin({min:1});
@@ -101,12 +99,21 @@
 </div>
 
 <!-- <a href='add_order' class="btn btn-primary btn-large"><span class="glyphicon glyphicon-floppy-disk"></span> Save order</a> -->
+<p>
+
+</p>
+<hr/>
 
 <div class="col pull-right">
 
   <button type="submit" id="submitBtn" value = "Submit" class="btn btn-success"><span class="glyphicon glyphicon-floppy-disk"></span> Save order</button>
+  <p>
+
+  </p>
 </div>
+
 </form>
+
 
 
 </div>
