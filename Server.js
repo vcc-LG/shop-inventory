@@ -43,10 +43,10 @@ router.get("/add_supplier", function(req, res, next) {
     res.render(path + 'add_supplier.ejs');
 });
 
-router.get("/order", function(req, res, next) {
+router.get("/list_orders", function(req, res, next) {
   db.get('order_collection').find({}, function(e, orders) {
       // console.log(suppliers);
-      res.render(path + "order.ejs", {
+      res.render(path + "list_orders.ejs", {
           orders: orders
       });
   });
@@ -101,7 +101,7 @@ router.get("/order", function(req, res, next) {
                 db.collection('order_collection').insertOne({
                   "items":items,
                   "order_total":order_total,
-                  "order_datetime":moment().format("dddd, MMMM Do YYYY, h:mm:ss a")
+                  "order_datetime":moment().format("YYYY-MM-DD HH:mm:ss")
                 }, function(err, result) {
                     assert.equal(err, null);
                     console.log("Inserted a document into the collection");
@@ -121,7 +121,7 @@ router.get("/order", function(req, res, next) {
 
         async.parallel(tasks, function(err) {
             if (err) return next(err);
-            res.redirect('/order');
+            res.redirect('/list_orders');
     });
 });
 
@@ -338,7 +338,7 @@ app.get('/delete_order/:id', function(req, res, next) {
 
     async.parallel(tasks, function(err) {
         if (err) return next(err);
-        res.redirect('/order');
+        res.redirect('/list_orders');
     });
 });
 
@@ -512,7 +512,7 @@ app.post('/update_order', function(req, res) {
 
       async.parallel(tasks, function(err) {
           if (err) return next(err);
-          res.redirect('/order');
+          res.redirect('/list_orders');
   });
 });
 

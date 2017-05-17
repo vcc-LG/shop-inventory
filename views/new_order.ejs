@@ -140,7 +140,7 @@
 
 <div class="col pull-right">
 
-  <button type="submit" id="submitBtn" value = "Submit" class="btn btn-default">Save order</button>
+  <button type="submit" id="submitBtn" value = "Submit" class="btn btn-success"><span class="glyphicon glyphicon-floppy-disk"></span> Save order</button>
 </div>
 </form>
 
@@ -168,18 +168,16 @@
 
         <% suppliers.forEach(function(item) { %>
 
-            <%= item["supplier_name"]%> = new Array([<% item["products"].forEach(function(thing) { %>
+            <%= item["supplier_name"].split(' ').join('_') %> = new Array([<% item["products"].forEach(function(thing) { %>
             "<%= thing["product_name"] %> : £<%= thing["product_price"] %> " ,
             <% }); %>
             ]);
 
               <% }); %>
 
-
-          <% suppliers.forEach(function(item) { %>
-        <%= item["supplier_name"]%> = <%= item["supplier_name"]%>[0];
-        <% }); %>
-
+              <% suppliers.forEach(function(item) { %>
+              <%= item["supplier_name"].split(' ').join('_')%> = <%= item["supplier_name"].split(' ').join('_')%>[0];
+              <% }); %>
 
         $("#suppliers").bind('input', function () {
           populateSelect();
@@ -192,7 +190,7 @@
 
 
         function populateSelect(){
-            cat=$('#suppliers').val().split("(")[0];
+            cat=$('#suppliers').val().split(" (")[0].split(' ').join('_');
             $('#products_list').html('');
                eval(cat).forEach(function(t) {
                     $('#products_list').append('<option>'+t+'</option>');
@@ -223,13 +221,13 @@
               // /var supplier_order = $('#suppliers').val();
                 document.getElementById('summary').innerHTML +=
 
-                '<div id='+fileId+'><div class="form-group"><label for="supplier_name">Supplier name:</label><input name="supplier_name" type="text" readonly class="form-control" id="supplier_name" value='+
+                '<div id='+fileId+'><div class="form-group"><label for="supplier_name">Supplier name:</label><input name="supplier_name" type="text" readonly class="form-control" id="supplier_name" value="'+
                 $('#suppliers').val().split("(")[0]+
-                '></div><div class="form-group"><label for="supplier_contact">Supplier contact:</label><input type="text" name="supplier_contact" readonly class="form-control" id="supplier_contact" value='+
+                '"></div><div class="form-group"><label for="supplier_contact">Supplier contact:</label><input type="text" name="supplier_contact" readonly class="form-control" id="supplier_contact" value="'+
                $('#suppliers').val().split("(")[1].split(")")[0]+
-                 '></div><div class="form-group"><label for="product_name">Product name:</label><input type="text" name="product_name" readonly class="form-control" id="product_name" value='+
+                 '"></div><div class="form-group"><label for="product_name">Product name:</label><input type="text" name="product_name" readonly class="form-control" id="product_name" value="'+
                 $('#products').val()+
-                '></div><div class="form-group"><label for="price_per_unit">Price per unit (£):</label><input name="product_price"  type="text" readonly class="form-control" id="price_per_unit" value='+
+                '"></div><div class="form-group"><label for="price_per_unit">Price per unit (£):</label><input name="product_price"  type="text" readonly class="form-control" id="price_per_unit" value='+
                (parseFloat($('#products').val().split("£")[1]))+
                 '></div><div class="form-group"><label for="product_quantity">Quantity:</label><input type="text" name="product_quantity" readonly class="form-control" id="product_quantity" value='+
                $('#quantity').val()+

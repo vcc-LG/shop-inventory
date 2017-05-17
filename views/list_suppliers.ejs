@@ -2,12 +2,15 @@
 
     <div class="container">
         <div class="jumbotron">
-            <h1>Inventory</h1>
+            <h1>Suppliers</h1>
         </div>
+        <a href="add_supplier" class="btn btn-primary btn-lg btn-block" role="button" aria-pressed="true">Add supplier</a>
+
+      <hr />
     </div>
     <div class="container">
         <div class="list-group">
-            <div class="panel-group" id="accordion">
+            <div class="panel-group container" id="accordion">
                 <% var i=0; %>
                     <% suppliers.forEach(function(item) { %>
                         <% i = i+1; %>
@@ -15,7 +18,7 @@
                                     <div class="panel panel-default">
                                         <div class="panel-heading">
                                             <h4 class="panel-title">
-                        <a data-toggle="collapse" href="#collapse<%= i %>"><%= item['supplier_name']%></a>
+                        <a data-toggle="collapse" href="#collapse<%= i %>"><span class="glyphicon glyphicon-collapse-down"></span>   <%= item['supplier_name']%> </a>
                       </h4>
                                         </div>
 
