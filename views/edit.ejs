@@ -19,7 +19,7 @@
                         <input type="hidden" id="supplier_id" name="supplier_id" value=<%=data[0][ '_id'] %> >
                     </div>
             </div>
-            <button formaction="/edit_supplier" type="submit" value="Submit" class="btn btn-default">Update</button>
+            <button formaction="/edit_supplier" type="submit" id="submitBtn" value = "Submit" class="btn btn-primary"><span class="glyphicon glyphicon-pencil"></span> Update supplier</button>
 
         </div>
         <div class="card">
@@ -33,7 +33,9 @@
                             <label for="product_price">Product price:</label>
                             <input type="text" class="form-control" id="product_price" name="product_price_<%=item['product_price'] %>" value=<%=item['product_price'] %>>
                         </div>
-                        <button formaction='../edit_product/<%= data[0]['_id'] %>/<%=item['product_name'] %>/<%=item['product_price'] %>/' type="submit" value="Submit" class="btn btn-default">Update</button>
+                        <button formaction='../edit_product/<%= data[0]['_id'] %>/<%=item['product_name'] %>/<%=item['product_price'] %>/' type="submit" id="submitBtn" value = "Submit" class="btn btn-primary"><span class="glyphicon glyphicon-pencil"></span> Update product</button>
+<hr/>
+
 <p>
 
 </p>
@@ -42,6 +44,7 @@
             </div>
         </div>
     </form>
+    <a href='/../list_suppliers' class="btn btn-default" role="button"><span class="glyphicon glyphicon-step-backward"></span>Back</a>
 
     </div>
     </body>

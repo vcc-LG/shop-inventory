@@ -67,21 +67,23 @@
 </p>
 
 </div>
+<script>
+$(document).ready(function(){
+    $('#suppliers_list').keyup(function(){
+      $('#products_list').keyup(function(){
+        $('#addOrderBtn').prop('disabled', this.value == "" ? true : false);
+      })
+    })
+});
+</script>
 <div class="row">
   <div class="container">
 
 
-    <a  id="addOrderBtn" onclick="add_to_order();" href="javascript:;"  class="btn btn-info btn-large pull-right" >Add to order </a>
+    <button id="addOrderBtn" class="btn btn-info btn-large pull-right" onclick="add_to_order();"><span class="glyphicon glyphicon-plus"></span> Add to order</button>
 
             </div>
-            <div class="alert alert-success" id="success-alert">
-              <p>
 
-              </p>
-                <button type="button" class="close" data-dismiss="alert">x</button>
-                <strong>Success! </strong>
-                Product added to order.
-            </div>
 </div>
 
 <form action="add_order" method="post">
@@ -142,6 +144,13 @@
 })(jQuery);
 
 $(document).ready (function(){
+
+  $('#suppliers_list').keyup(function(){
+    $('#products_list').keyup(function(){
+      $('#addOrderBtn').prop('disabled', this.value == null ? true : false);
+    })
+  })
+
             $("#success-alert").hide();
             $("#addOrderBtn").click(function showAlert() {
                 $("#success-alert").alert();
@@ -149,7 +158,17 @@ $(document).ready (function(){
                $("#success-alert").slideUp(500);
                 });
             });
+
+            // $('#suppliers_list').keyup(function(){
+            //   $('#products_list').keyup(function(){
+            //     $('#addOrderBtn').prop('disabled', this.value == null ? true : false);
+            //   })
+            // })
  });
+ function resizeInput() {
+     $(this).attr('size', $(this).val().length);
+ }
+
 
 </script>
 
@@ -195,7 +214,7 @@ $(document).ready (function(){
             function removeElement(elementId) {
                 // Removes an element from the document
 
-                document.getElementById("order_total").value = parseFloat($('#order_total').text()) - prices_dict[elementId] ;
+                document.getElementById("order_total").value = parseFloat($('#order_total').value()) - prices_dict[elementId] ;
                 if (document.getElementById("order_total").value == 0){
                   document.getElementById("submitBtn").disabled = true;
                 }
@@ -203,9 +222,9 @@ $(document).ready (function(){
                   document.getElementById("submitBtn").disabled = false;
                 }
                 var element = document.getElementById(elementId);
-                element.parentNode.removeChild(element);
-                $('#summary hr').remove();
-
+                element.remove();
+                // $('#summary hr').remove();
+                //
 
             }
 
@@ -220,20 +239,25 @@ $(document).ready (function(){
               // /var supplier_order = $('#suppliers').val();
                 document.getElementById('summary').innerHTML +=
 
-                '<div id='+fileId+'><div class="form-group"><label for="supplier_name">Supplier name:</label><input name="supplier_name" type="text" readonly class="form-control" id="supplier_name" value="'+
+                '<div id='+fileId+'><a class="btn btn-default btn-block" role="button">'+
+                '<li>Supplier: <input style="border:none;background:transparent;color:#000;" type="text" name="supplier_name" id="supplier_name" value='+
                 $('#suppliers_list').val().split("(")[0]+
-                '"></div><div class="form-group"><label for="supplier_contact">Supplier contact:</label><input type="text" name="supplier_contact" readonly class="form-control" id="supplier_contact" value="'+
-               $('#suppliers_list').val().split("(")[1].split(")")[0]+
-                 '"></div><div class="form-group"><label for="product_name">Product name:</label><input type="text" name="product_name" readonly class="form-control" id="product_name" value="'+
+                '></li>'+
+                '<li>Product: <input style="border:none;background:transparent;color:#000;" type="text" name="product_name" id="product_name" value='+
                 $('#products_list').val().split(' :')[0]+
-                '"></div><div class="form-group"><label for="price_per_unit">Price per unit (£):</label><input name="product_price"  type="text" readonly class="form-control" id="price_per_unit" value='+
-               (parseFloat($('#products_list').val().split("£")[1]))+
-                '></div><div class="form-group"><label for="product_quantity">Quantity:</label><input type="text" name="product_quantity" readonly class="form-control" id="product_quantity" value='+
-               $('#quantity').val()+
-               '></div><div class="form-group"><label for="cost_for_items">Cost for item(s) (£):</label><input name="product_price_total" type="text" readonly class="form-control" id="cost_for_items" value='+
-              priceToAdd+
-               '></div><a href="" onclick="javascript:removeElement('+fileId + '); return false;">Remove</a></div><hr />';
+                '></li>'+
+                '<li>Quantity: <input style="border:none;background:transparent;color:#000;" type="text" name="product_quantity" id="product_quantity" value='+
+                $('#quantity').val()+
+                '></li>'+
+                '<li>Price per unit: <input style="border:none;background:transparent;color:#000;" type="text" name="product_price" id="product_price" value='+
+                (parseFloat($('#products_list').val().split("£")[1]))+
+                '></li>'+
+                '<li>Cost for items: <input style="border:none;background:transparent;color:#000;" type="text" name="product_price_total" id="product_price_total" value='+
+                priceToAdd+
+                '></li>'+
+                '</a><a href="" onclick="javascript:removeElement('+fileId + '); return false;">Remove</a></div><hr />';
                var new_total = parseFloat($('#order_total').text()) + priceToAdd;
+               new_total = new_total.toFixed(2);
                 document.getElementById("order_total").innerHTML = new_total;
                 document.getElementById("order_total").value = new_total;
                 document.getElementById("last_price").value = priceToAdd;
@@ -245,25 +269,5 @@ $(document).ready (function(){
             }}
 
         </script>
-        <!-- <script>
-        $(function () {
 
-          $('#cmd').click(function () {
-            window.print()
-          // var doc = new jsPDF();
-            // $("#cmd").val('');
-            // $("#cmd").css('background-color','transparent');
-            // $("#cmd").css('border','none');
-            //
-            // doc.addHTML($('#content')[0], 15, 15, {
-            //   'background': '#fff',
-            // }, function() {
-            //   doc.save('sample-file.pdf');
-            //   $("#cmd").val('Print order');
-            //   $("#cmd").removeAttr('style');
-            //
-            // });
-          });
-        });
-        </script> -->
         </body>

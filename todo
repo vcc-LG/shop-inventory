@@ -1,0 +1,23 @@
+- Supplier name white-space
+- Supplier contact
+- No numeric check
+- Add supplier comments/notes
+- Added to order confirmation
+- Print order
+- Phone number with space messes with summary
+- Whitespace in contact might be messing up product list 
+- Product doesn't exist warning
+
+<% suppliers.forEach(function(item) { %>
+<%= item["supplier_name"].split(' ').join('_')%> = <%= item["supplier_name"].split(' ').join('_')%>[0];
+<% }); %>
+
+
+<div class="input-group spinner">
+  <input type="text" class="form-control" id="quantity" value="1">
+  <div class="input-group-btn-vertical">
+    <button class="btn btn-default" type="button"><i class="fa fa-caret-up"></i></button>
+    <button class="btn btn-default" type="button"><i class="fa fa-caret-down"></i></button>
+  </div>
+</div>
+</div>

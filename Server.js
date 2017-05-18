@@ -63,13 +63,13 @@ router.get("/list_orders", function(req, res, next) {
           var product_quantities = req.body.product_quantity;
           var cost_for_items = req.body.product_price_total;
           var order_total = req.body.order_total;
-          // console.log(supplier_names);
-          // console.log(supplier_contacts);
-          // console.log(product_names);
-          // console.log(price_per_units);
-          // console.log(product_quantities);
-          // console.log(cost_for_items);
-          // console.log(order_total);
+          console.log(supplier_names);
+          console.log(supplier_contacts);
+          console.log(product_names);
+          console.log(price_per_units);
+          console.log(product_quantities);
+          console.log(cost_for_items);
+          console.log(order_total);
 
           var items = [];
           var number_of_items = supplier_names.length;
