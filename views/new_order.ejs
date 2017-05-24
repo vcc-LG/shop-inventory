@@ -191,6 +191,7 @@ $(document).ready (function(){
               <% }); %>
 
         $("#suppliers_list").change(function () {
+          // console.log('hello');
           populateSelect();
         });
 
@@ -203,8 +204,9 @@ $(document).ready (function(){
 
 
         function populateSelect(){
-            cat=$('#supplier_choice').val().split(" (")[0].split(' ').join('_');
+            cat=$('#suppliers_list').val().split(" (")[0].split(' ').join('_');
             $('#products_list').html('');
+            // console.log($('#supplier_choice').val());
                eval(cat).forEach(function(t) {
                  console.log(t);
                     $('#products_list').append('<option>'+t+'</option>');
@@ -241,7 +243,7 @@ $(document).ready (function(){
 
                 '<div id='+fileId+'><a class="btn btn-default btn-block" role="button">'+
                 '<li>Supplier: <input style="border:none;background:transparent;color:#000;" type="text" name="supplier_name" id="supplier_name" value='+
-                $('#suppliers_list').val().split("(")[0]+
+                $('#suppliers_list').val().split(" (")[0]+
                 '></li>'+
                 '<li>Product: <input style="border:none;background:transparent;color:#000;" type="text" name="product_name" id="product_name" value='+
                 $('#products_list').val().split(' :')[0]+

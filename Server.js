@@ -25,35 +25,171 @@ MongoClient.connect(url, function(err, db) {
 });
 
 const db = require('monk')('localhost/shopdb')
-// const collection = db.get('shop_collection')
 db.then(() => {
     console.log('Connected correctly to server')
 })
 
-router.use(function(req, res, next) {
-    console.log("/" + req.method);
-    next();
-});
-
-router.get("/", function(req, res, next) {
+app.get("/", function(req, res, next) {
     res.render(path + 'index.ejs');
 });
 
-router.get("/add_supplier", function(req, res, next) {
+app.get("/add_supplier", function(req, res, next) {
     res.render(path + 'add_supplier.ejs');
 });
 
-router.get("/list_orders", function(req, res, next) {
+app.get("/list_orders", function(req, res, next) {
   db.get('order_collection').find({}, function(e, orders) {
-      // console.log(suppliers);
       res.render(path + "list_orders.ejs", {
           orders: orders
       });
   });
 });
 
-  app.post('/add_order', function(req, res) {
+router.get("/new_order", function(req, res, next) {
+    db.get('shop_collection').find({products : {$exists:true}, $where:'this.products.length>0'}, function(e, suppliers) {
+        res.render(path + "new_order.ejs", {
+            suppliers: suppliers
+        });
+    });
+});
 
+app.get('/edit_order/:id', function(req, res, next) {
+    var locals = {};
+    var tasks = [
+        // Load users
+        function(callback) {
+            db.collection('shop_collection').find({products : {$exists:true}, $where:'this.products.length>0'}, function(e, suppliers) {
+                locals.suppliers = suppliers;
+                callback();
+            });
+        },
+        function(callback) {
+            db.collection('order_collection').find({"_id": ObjectId(req.params.id)}, function(e, order_edit) {
+                locals.order = order_edit;
+                callback();
+            });
+        }
+    ];
+
+    async.parallel(tasks, function(err) { //This function gets called after the two tasks have called their "task callbacks"
+        if (err) return next(err); //If an error occurred, let express handle it by calling the `next` function
+        res.render(path + "edit_order.ejs", {
+            order: locals.order[0],
+            suppliers: locals.suppliers
+        });
+      });
+});
+
+app.get('/view_supplier/:id', function(req, res, next) {
+    db.get('shop_collection').find({
+        "_id": ObjectId(req.params.id)
+    }, function(e, data) {
+      console.log(data);
+        res.render(path + "view_supplier.ejs", {
+            supplier: data[0]
+        });
+    });
+});
+
+app.get('/add_product/:id', function(req, res, next) {
+    db.get('shop_collection').find({
+        "_id": ObjectId(req.params.id)
+    }, function(e, data) {
+        res.render(path + "add_product.ejs", {
+            supplier: data
+        });
+    });
+});
+
+app.get('/view_order/:id', function(req, res, next) {
+    db.get('order_collection').find({
+        "_id": ObjectId(req.params.id)
+    }, function(e, order) {
+        res.render(path + "view_order.ejs", {
+            order: order[0]
+        });
+    });
+});
+
+app.get('/delete_supplier/:id', function(req, res, next) {
+    var tasks = [
+        function(callback) {
+          var supplier_id = req.params.id;
+            var deleteDocument = function(db, callback) {
+                db.collection('shop_collection').deleteOne(
+                  {"_id":ObjectId(supplier_id)},function(err, result) {
+                    assert.equal(err, null);
+                    console.log("Removed document");
+                    callback();
+                });
+            };
+            MongoClient.connect(url, function(err, db) {
+                assert.equal(null, err);
+                deleteDocument(db, function() {
+                    db.close();
+                    callback();
+                });
+            });
+        }
+    ];
+    async.parallel(tasks, function(err) {
+        if (err) return next(err);
+        res.redirect('/list_suppliers');
+    });
+});
+
+app.get('/delete_order/:id', function(req, res, next) {
+    var tasks = [
+        function(callback) {
+          var supplier_id = req.params.id;
+
+            var deleteDocument = function(db, callback) {
+                db.collection('order_collection').deleteOne(
+                  {"_id":ObjectId(supplier_id)},function(err, result) {
+                    assert.equal(err, null);
+                    console.log("Removed document");
+                    callback();
+                });
+            };
+            MongoClient.connect(url, function(err, db) {
+                assert.equal(null, err);
+                deleteDocument(db, function() {
+                    db.close();
+                    callback();
+                });
+            });
+        }
+    ];
+
+    async.parallel(tasks, function(err) {
+        if (err) return next(err);
+        res.redirect('/list_orders');
+    });
+});
+
+
+
+app.get('/edit_supplier/:id', function(req, res, next) {
+    db.get('shop_collection').find({
+        "_id": ObjectId(req.params.id)
+    }, function(e, supplier_edit) {
+        res.render(path + "edit_supplier.ejs", {
+            data: supplier_edit
+        });
+    });
+});
+
+
+router.get("/list_suppliers", function(req, res, next) {
+    db.get('shop_collection').find({}, function(e, suppliers) {
+        // console.log(suppliers);
+        res.render(path + "list_suppliers.ejs", {
+            suppliers: suppliers
+        });
+    });
+});
+
+app.post('/add_order', function(req, res) {
     var tasks = [
         function(callback) {
           var supplier_names = req.body.supplier_name;
@@ -126,17 +262,6 @@ router.get("/list_orders", function(req, res, next) {
 });
 
 
-
-router.get("/new_order", function(req, res, next) {
-    db.get('shop_collection').find({products : {$exists:true}, $where:'this.products.length>0'}, function(e, suppliers) {
-        // console.log(suppliers);
-        res.render(path + "new_order.ejs", {
-            suppliers: suppliers
-        });
-    });
-});
-
-
 app.post('/add_supplier', function(req, res) {
     var tasks = [
         function(callback) {
@@ -167,78 +292,6 @@ app.post('/add_supplier', function(req, res) {
         async.parallel(tasks, function(err) {
             if (err) return next(err);
             res.redirect('/list_suppliers');
-    });
-});
-
-app.get('/edit/:id', function(req, res, next) {
-    // console.log(req.params.id);
-    db.get('shop_collection').find({
-        "_id": ObjectId(req.params.id)
-    }, function(e, supplier_edit) {
-        // console.log(supplier_edit);
-        res.render(path + "edit.ejs", {
-            data: supplier_edit
-        });
-    });
-});
-
-app.get('/edit_order/:id', function(req, res, next) {
-    // console.log(req.params.id);
-
-    var locals = {};
-    var tasks = [
-        // Load users
-        function(callback) {
-            db.collection('shop_collection').find({products : {$exists:true}, $where:'this.products.length>0'}, function(e, suppliers) {
-                locals.suppliers = suppliers;
-                callback();
-            });
-        },
-        function(callback) {
-            db.collection('order_collection').find({"_id": ObjectId(req.params.id)}, function(e, order_edit) {
-                locals.order = order_edit;
-                callback();
-            });
-        }
-    ];
-
-    async.parallel(tasks, function(err) { //This function gets called after the two tasks have called their "task callbacks"
-        if (err) return next(err); //If an error occurred, let express handle it by calling the `next` function
-        // console.log(locals.suppliers[0]);
-        res.render(path + "edit_order.ejs", {
-            order: locals.order[0],
-            suppliers: locals.suppliers
-        });
-});
-});
-
-
-
-app.get('/add_product/:id', function(req, res, next) {
-    // console.log(req.params.id);
-    db.get('shop_collection').find({
-        "_id": ObjectId(req.params.id)
-    }, function(e, data) {
-        // console.log(supplier_edit);
-        res.render(path + "add_product.ejs", {
-            supplier: data
-        });
-    });
-});
-
-app.get('/view_order/:id', function(req, res, next) {
-
-    // console.log(req.params.id);
-    // res.render(path+"view_order.ejs",{
-    //
-    // });
-    db.get('order_collection').find({
-        "_id": ObjectId(req.params.id)
-    }, function(e, order) {
-        // console.log(order);
-        res.render(path + "view_order.ejs", {
-            order: order[0]
-        });
     });
 });
 
@@ -280,67 +333,6 @@ app.post('/add_product', function(req, res) {
     });
 });
 
-
-
-app.get('/delete/:id', function(req, res, next) {
-  // console.log('hello');
-    var tasks = [
-        function(callback) {
-          var supplier_id = req.params.id;
-
-            var deleteDocument = function(db, callback) {
-                db.collection('shop_collection').deleteOne(
-                  {"_id":ObjectId(supplier_id)},function(err, result) {
-                    assert.equal(err, null);
-                    console.log("Removed document");
-                    callback();
-                });
-            };
-            MongoClient.connect(url, function(err, db) {
-                assert.equal(null, err);
-                deleteDocument(db, function() {
-                    db.close();
-                    callback();
-                });
-            });
-        }
-    ];
-
-    async.parallel(tasks, function(err) {
-        if (err) return next(err);
-        res.redirect('/list_suppliers');
-    });
-});
-
-app.get('/delete_order/:id', function(req, res, next) {
-  // console.log('hello');
-    var tasks = [
-        function(callback) {
-          var supplier_id = req.params.id;
-
-            var deleteDocument = function(db, callback) {
-                db.collection('order_collection').deleteOne(
-                  {"_id":ObjectId(supplier_id)},function(err, result) {
-                    assert.equal(err, null);
-                    console.log("Removed document");
-                    callback();
-                });
-            };
-            MongoClient.connect(url, function(err, db) {
-                assert.equal(null, err);
-                deleteDocument(db, function() {
-                    db.close();
-                    callback();
-                });
-            });
-        }
-    ];
-
-    async.parallel(tasks, function(err) {
-        if (err) return next(err);
-        res.redirect('/list_orders');
-    });
-});
 
 app.post('/edit_supplier', function(req, res) {
   console.log('hello');
@@ -388,9 +380,6 @@ app.post('/edit_supplier', function(req, res) {
 });
 
 app.post('/edit_product/:id/:product_name/:product_price', function(req, res) {
-  // var product_names = req.body['product_name_'+req.params.product_name];
-  //
-  // console.log(product_names);
     var tasks = [
         function(callback) {
           var supplier_id = req.params.id;
@@ -425,27 +414,52 @@ app.post('/edit_product/:id/:product_name/:product_price', function(req, res) {
         if (err) return next(err);
         res.redirect('/list_suppliers');
     });
-
 });
 
 
-router.get("/add_product", function(req, res, next) {
-    res.render(path + 'add_product.ejs');
-});
 
-router.get("/edit_supplier", function(req, res, next) {
-    res.render(path + 'edit_supplier.ejs');
-});
+app.post('/delete_product/:id/:product_name/:product_price', function(req, res) {
+    var tasks = [
+        function(callback) {
+          var supplier_id = req.params.id;
+          var product_name = req.params.product_name;
+          var product_price = req.params.product_price;
 
+            var deleteElement = function(db, callback) {
+                db.collection('shop_collection').update(
+                  {"_id":ObjectId(supplier_id)},
+                  {$pull:{'products':{'product_name':product_name,
+                  'product_price':product_price}}}
+                , function(err, result) {
+                    assert.equal(err, null);
+                    console.log("Deleted product");
+                    callback();
+                });
+            };
+            MongoClient.connect(url, function(err, db) {
+                assert.equal(null, err);
+                deleteElement(db, function() {
+                    db.close();
+                    callback();
+                });
+            });
+        }
+    ];
 
-router.get("/list_suppliers", function(req, res, next) {
-    db.get('shop_collection').find({}, function(e, suppliers) {
-        // console.log(suppliers);
-        res.render(path + "list_suppliers.ejs", {
-            suppliers: suppliers
+    async.parallel(tasks, function(err) {
+        if (err) return next(err);
+        db.get('shop_collection').find({
+            "_id": ObjectId(req.params.id)
+        }, function(e, supplier_edit) {
+            res.render(path + "edit_supplier.ejs", {
+                data: supplier_edit
+            });
         });
-    });
+       });
 });
+
+
+
 
 
 app.post('/update_order', function(req, res) {
@@ -516,11 +530,7 @@ app.post('/update_order', function(req, res) {
   });
 });
 
-
-
-
 app.use("/", router);
-
 
 app.listen(3000, function() {
     console.log("Live at Port 3000");

@@ -52,7 +52,7 @@
                                                                   <p>
                                                                     <%=item['product_name'] %>
                                                                   </p>
-                                                                  <label for="product_price">Product price:</label>
+                                                                  <label for="product_price">Product price (£):</label>
                                                                   <p>
                                                                     <%=item['product_price'] %>
                                                                   </p>
@@ -71,10 +71,12 @@
                                                     </p>
 
                                                     <span class="pull-right button-group">
-          <a href='add_product/<%= item["_id"] %>' class="btn btn-primary"><span class="glyphicon glyphicon-plus"></span> Add product</a>
-                                                    <a href='edit/<%= item["_id"] %>' class="btn btn-warning"><span class="glyphicon glyphicon-edit"></span> Edit</a>
+                                                      <a href='view_supplier/<%= item["_id"] %>' class="btn btn-info"><span class="glyphicon glyphicon-eye-open"></span></a>
 
-                                                    <button type="button"  data-id=<%=item['_id']%> class="open-deleteDialog btn btn-danger " data-toggle="modal" data-target="#myModal"><span class="glyphicon glyphicon-remove"></span> Delete</button>
+                                                    <a href='add_product/<%= item["_id"] %>' class="btn btn-primary"><span class="glyphicon glyphicon-plus"></span></a>
+                                                    <a href='edit_supplier/<%= item["_id"] %>' class="btn btn-warning"><span class="glyphicon glyphicon-edit"></span></a>
+
+                                                    <button type="button"  data-id=<%=item['_id']%> class="open-deleteDialog btn btn-danger " data-toggle="modal" data-target="#myModal"><span class="glyphicon glyphicon-remove"></span></button>
                                                     <div class="modal fade" id="myModal" role="dialog">
                                                         <div class="modal-dialog">
 
@@ -112,8 +114,7 @@
 
 $(document).on("click", ".open-deleteDialog", function () {
      var mySupplierID = $(this).data('id');
-     console.log('delete/'+mySupplierID);
-     $(".modal-footer #deletelink").attr('href','delete/'+mySupplierID );
+     $(".modal-footer #deletelink").attr('href','delete_supplier/'+mySupplierID );
 });
 
 </script>
