@@ -38,7 +38,7 @@ app.get("/add_supplier", function(req, res, next) {
 });
 
 app.get("/list_orders", function(req, res, next) {
-  db.get('order_collection').find({}, function(e, orders) {
+  db.get('order_collection').find({},{sort:{order_datetime:-1}}, function(e, orders) {
       res.render(path + "list_orders.ejs", {
           orders: orders
       });
@@ -102,13 +102,32 @@ app.get('/add_product/:id', function(req, res, next) {
 });
 
 app.get('/view_order/:id', function(req, res, next) {
-    db.get('order_collection').find({
-        "_id": ObjectId(req.params.id)
-    }, function(e, order) {
-        res.render(path + "view_order.ejs", {
-            order: order[0]
-        });
+
+  var locals = {};
+  var tasks = [
+      // Load users
+      function(callback) {
+          db.collection('shop_collection').find({products : {$exists:true}, $where:'this.products.length>0'}, function(e, suppliers) {
+              locals.suppliers = suppliers;
+              callback();
+          });
+      },
+      function(callback) {
+          db.collection('order_collection').find({"_id": ObjectId(req.params.id)}, function(e, order_edit) {
+              locals.order = order_edit;
+              callback();
+          });
+      }
+  ];
+
+  async.parallel(tasks, function(err) { //This function gets called after the two tasks have called their "task callbacks"
+      if (err) return next(err); //If an error occurred, let express handle it by calling the `next` function
+      res.render(path + "view_order.ejs", {
+          order: locals.order[0],
+          suppliers: locals.suppliers
+      });
     });
+
 });
 
 app.get('/delete_supplier/:id', function(req, res, next) {

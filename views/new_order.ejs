@@ -251,10 +251,10 @@ $(document).ready (function(){
                 '<li>Quantity: <input style="border:none;background:transparent;color:#000;" type="text" name="product_quantity" id="product_quantity" value='+
                 $('#quantity').val()+
                 '></li>'+
-                '<li>Price per unit: <input style="border:none;background:transparent;color:#000;" type="text" name="product_price" id="product_price" value='+
+                '<li>Price per unit (£): <input style="border:none;background:transparent;color:#000;" type="text" name="product_price" id="product_price" value='+
                 (parseFloat($('#products_list').val().split("£")[1]))+
                 '></li>'+
-                '<li>Cost for items: <input style="border:none;background:transparent;color:#000;" type="text" name="product_price_total" id="product_price_total" value='+
+                '<li>Cost for items (£): <input style="border:none;background:transparent;color:#000;" type="text" name="product_price_total" id="product_price_total" value='+
                 priceToAdd+
                 '></li>'+
                 '</a><a href="" onclick="javascript:removeElement('+fileId + '); return false;">Remove</a></div><hr />';
